@@ -34,14 +34,15 @@ class TestBanner(NereidTestCase):
         self.Language = POOL.get('ir.lang')
         self.NereidWebsite = POOL.get('nereid.website')
         self.Party = POOL.get('party.party')
+        self.Locale = POOL.get('nereid.website.locale')
 
         self.templates = {
             'home.jinja':
-                '''
+            '''
                 {% for banner in get_banner_category("test-banners").banners %}
-                {{ banner.get_html()|safe }}
+                    {{ banner.get_html()|safe }}
                 {% endfor %}
-                ''',
+            ''',
         }
 
     def get_template_source(self, name):
@@ -90,12 +91,17 @@ class TestBanner(NereidTestCase):
         # Create website
         url_map, = self.UrlMap.search([], limit=1)
         en_us, = self.Language.search([('code', '=', 'en_US')])
+        self.locale_en_us, = self.Locale.create([{
+            'code': 'en_US',
+            'language': en_us.id,
+            'currency': usd.id
+        }])
         return self.NereidWebsite.create([{
             'name': 'localhost',
             'url_map': url_map,
             'company': company,
             'application_user': USER,
-            'default_language': en_us,
+            'default_locale': self.locale_en_us.id,
             'guest_user': guest_user,
             'currencies': [('set', [usd.id])],
         }])[0]
@@ -182,11 +188,11 @@ class TestBanner(NereidTestCase):
 
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('/en_US/')
+                response = c.get('/')
                 html = objectify.fromstring(response.data)
                 self.assertEqual(
                     html.find('img').get('src'),
-                    '/en_US/static-file/image/logo'
+                    '/static-file/image/logo'
                 )
 
     def test_0030_remote_image(self):
@@ -209,7 +215,7 @@ class TestBanner(NereidTestCase):
 
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('/en_US/')
+                response = c.get('/')
                 html = objectify.fromstring(response.data)
                 self.assertEqual(
                     html.find('img').get('src'),
@@ -237,7 +243,7 @@ class TestBanner(NereidTestCase):
 
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('/en_US/')
+                response = c.get('/')
                 self.assertTrue(
                     'some ultra complex custom code' in response.data,
                 )
@@ -261,14 +267,15 @@ class TestGetHtml(NereidTestCase):
         self.Language = POOL.get('ir.lang')
         self.NereidWebsite = POOL.get('nereid.website')
         self.Party = POOL.get('party.party')
+        self.Locale = POOL.get('nereid.website.locale')
 
         self.templates = {
             'home.jinja':
-                '''
+            '''
                 {% for b in get_banner_category('Category A').banners -%}
                 {{ b.get_html()|safe }}
                 {%- endfor %}
-                ''',
+            ''',
             'article-category.jinja': '{{ articles|length }}',
             'article.jinja': '{{ article.content }}',
         }
@@ -319,12 +326,17 @@ class TestGetHtml(NereidTestCase):
         # Create website
         url_map, = self.UrlMap.search([], limit=1)
         en_us, = self.Language.search([('code', '=', 'en_US')])
+        self.locale_en_us, = self.Locale.create([{
+            'code': 'en_US',
+            'language': en_us.id,
+            'currency': usd.id
+        }])
         return self.NereidWebsite.create([{
             'name': 'localhost',
             'url_map': url_map,
             'company': company,
             'application_user': USER,
-            'default_language': en_us,
+            'default_locale': self.locale_en_us.id,
             'guest_user': guest_user,
             'currencies': [('set', [usd.id])],
         }])[0]
@@ -363,7 +375,7 @@ class TestGetHtml(NereidTestCase):
                 html = objectify.fromstring(rv.data)
                 self.assertEqual(
                     html.find('img').get('src'),
-                    '/en_US/static-file/image/logo'
+                    '/static-file/image/logo'
                 )
 
     def test_0020_get_html(self):

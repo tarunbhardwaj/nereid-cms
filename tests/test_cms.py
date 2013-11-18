@@ -34,6 +34,7 @@ class TestCMS(NereidTestCase):
         self.Website = POOL.get('nereid.website')
         self.ArticleAttribute = POOL.get('nereid.cms.article.attribute')
         self.Party = POOL.get('party.party')
+        self.Locale = POOL.get('nereid.website.locale')
 
         self.templates = {
             'home.jinja':
@@ -89,15 +90,21 @@ class TestCMS(NereidTestCase):
             'company': company.id,
         }])
 
+        # Create locale
+        en_us, = self.Language.search([('code', '=', 'en_US')])
+        self.locale_en_us, = self.Locale.create([{
+            'code': 'en_US',
+            'language': en_us.id,
+            'currency': usd.id
+        }])
         # Create website
         url_map, = self.UrlMap.search([], limit=1)
-        en_us, = self.Language.search([('code', '=', 'en_US')])
         self.Website.create([{
             'name': 'localhost',
             'url_map': url_map,
             'company': company.id,
             'application_user': USER,
-            'default_language': en_us,
+            'default_locale': self.locale_en_us.id,
             'guest_user': guest_user,
             'currencies': [('set', [usd.id])],
         }])
@@ -134,7 +141,7 @@ class TestCMS(NereidTestCase):
             self.setup_defaults()
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('/en_US/article-category/test-categ')
+                response = c.get('/article-category/test-categ')
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.data, '1')
 
@@ -144,7 +151,7 @@ class TestCMS(NereidTestCase):
             self.setup_defaults()
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('/en_US/article/test-article')
+                response = c.get('/article/test-article')
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.data, 'Test Content')
 
@@ -156,7 +163,7 @@ class TestCMS(NereidTestCase):
             self.setup_defaults()
             app = self.get_app(DEBUG=True)
             with app.test_client() as c:
-                response = c.get('/en_US/sitemaps/article-category-index.xml')
+                response = c.get('/sitemaps/article-category-index.xml')
                 self.assertEqual(response.status_code, 200)
 
     def test_0040_category_sitemap(self):
@@ -167,7 +174,7 @@ class TestCMS(NereidTestCase):
             self.setup_defaults()
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('en_US/sitemaps/article-category-1.xml')
+                response = c.get('/sitemaps/article-category-1.xml')
                 self.assertEqual(response.status_code, 200)
 
     def test_0050_article_attribute(self):

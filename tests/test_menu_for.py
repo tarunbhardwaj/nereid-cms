@@ -66,12 +66,17 @@ class TestMenuFor(NereidTestCase):
         # Create website
         url_map, = self.UrlMap.search([], limit=1)
         en_us, = self.Language.search([('code', '=', 'en_US')])
+        self.locale_en_us, = self.Locale.create([{
+            'code': 'en_US',
+            'language': en_us.id,
+            'currency': usd.id
+        }])
         self.site1, = self.NereidWebsite.create([{
             'name': 'localhost',
             'url_map': url_map.id,
             'company': company.id,
             'application_user': USER,
-            'default_language': en_us,
+            'default_locale': self.locale_en_us.id,
             'guest_user': guest_user,
             'currencies': [('set', [usd.id])],
         }])
@@ -88,6 +93,7 @@ class TestMenuFor(NereidTestCase):
         self.NereidWebsite = POOL.get('nereid.website')
         self.Party = POOL.get('party.party')
         self.Menu = POOL.get('nereid.cms.menu')
+        self.Locale = POOL.get('nereid.website.locale')
 
         self.templates = {
             'home.jinja':
@@ -132,7 +138,7 @@ class TestMenuFor(NereidTestCase):
             }])
 
             with app.test_client() as c:
-                response = c.get('/en_US/')
+                response = c.get('/')
                 rv = literal_eval(response.data)
             self.assertTrue(rv['uri'], 'category-name')
 
