@@ -269,7 +269,9 @@ class MenuItem(ModelSQL, ModelView):
     @staticmethod
     def links_get():
         CMSLink = Pool().get('nereid.cms.link')
-        return [(x.model, x.name) for x in CMSLink.search([])]
+        links = [(x.model, x.name) for x in CMSLink.search([])]
+        links.append([None, ''])
+        return links
 
     @staticmethod
     def default_active():
@@ -282,14 +284,16 @@ class MenuItem(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(MenuItem, cls).__setup__()
-        cls._constraints += [
-            ('check_recursion', 'wrong_recursion')
-        ]
         cls._error_messages.update({
             'wrong_recursion':
             'Error ! You can not create recursive menuitems.',
         })
         cls._order.insert(0, ('sequence', 'ASC'))
+
+    @classmethod
+    def validate(cls, menus):
+        super(MenuItem, cls).validate(menus)
+        cls.check_recursion(menus)
 
     def on_change_title(self):
         res = {}
