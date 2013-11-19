@@ -520,7 +520,7 @@ class ArticleCategory(ModelSQL, ModelView):
     def on_change_title(self):
         res = {}
         if self.title and not self.unique_name:
-            res['title'] = slugify(self.title)
+            res['unique_name'] = slugify(self.title)
         return res
 
     @classmethod
