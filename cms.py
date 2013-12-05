@@ -16,7 +16,7 @@ from nereid.contrib.sitemap import SitemapIndex, SitemapSection
 from werkzeug.exceptions import NotFound, InternalServerError
 
 from trytond.pyson import Eval, Not, Equal, Bool, In
-from trytond.model import ModelSQL, ModelView, fields
+from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
 from trytond.pool import Pool
 
@@ -315,7 +315,10 @@ class BannerCategory(ModelSQL, ModelView):
     __name__ = 'nereid.cms.banner.category'
 
     name = fields.Char('Name', required=True, select=True)
-    banners = fields.One2Many('nereid.cms.banner', 'category', 'Banners')
+    banners = fields.One2Many(
+        'nereid.cms.banner', 'category', 'Banners',
+        context={'published': True}
+    )
     website = fields.Many2One('nereid.website', 'WebSite', select=True)
     published_banners = fields.Function(
         fields.One2Many(
@@ -361,12 +364,12 @@ class BannerCategory(ModelSQL, ModelView):
         return res
 
 
-class Banner(ModelSQL, ModelView):
+class Banner(Workflow, ModelSQL, ModelView):
     """Banner for CMS."""
     __name__ = 'nereid.cms.banner'
 
     name = fields.Char('Name', required=True, select=True)
-    description = fields.Char('Description')
+    description = fields.Text('Description')
     category = fields.Many2One(
         'nereid.cms.banner.category', 'Category', required=True, select=True
     )
@@ -414,7 +417,7 @@ class Banner(ModelSQL, ModelView):
         }
     )
     alternative_text = fields.Char(
-        'Alternative Text',
+        'Alternative Text', translate=True,
         states={
             'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
         }
@@ -427,15 +430,41 @@ class Banner(ModelSQL, ModelView):
     )
 
     state = fields.Selection([
-        ('published', 'Published'),
-        ('archived', 'Archived')
-    ], 'State', required=True, select=True)
+            ('draft', 'Draft'),
+            ('published', 'Published'),
+            ('archived', 'Archived')
+    ], 'State', required=True, select=True, readonly=True)
     reference = fields.Reference('Reference', selection='links_get')
 
     @classmethod
     def __setup__(cls):
         super(Banner, cls).__setup__()
         cls._order.insert(0, ('sequence', 'ASC'))
+        cls._transitions |= set((
+                ('draft', 'published'),
+                ('archived', 'published'),
+                ('published', 'archived'),
+        ))
+        cls._buttons.update({
+            'archive': {
+                'invisible': Eval('state') != 'published',
+            },
+            'publish': {
+                'invisible': Eval('state') == 'published',
+            }
+        })
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('archived')
+    def archive(cls, banners):
+        pass
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('published')
+    def publish(cls, banners):
+        pass
 
     def get_html(self):
         """Return the HTML content"""
@@ -475,6 +504,16 @@ class Banner(ModelSQL, ModelView):
     def links_get():
         CMSLink = Pool().get('nereid.cms.link')
         return [('', '')] + [(x.model, x.name) for x in CMSLink.search([])]
+
+    @staticmethod
+    def default_type():
+        return 'image'
+
+    @staticmethod
+    def default_state():
+        if 'published' in Transaction().context:
+            return 'published'
+        return 'draft'
 
 
 class ArticleCategory(ModelSQL, ModelView):
