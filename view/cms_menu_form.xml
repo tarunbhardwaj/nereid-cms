@@ -1,0 +1,27 @@
+<form string="CMS Menu">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="unique_identifier"/>
+    <field name="unique_identifier"/>
+    <label name="website"/>
+    <field name="website"/>
+    <label name="model"/>
+    <field name="model"/>
+    <label name="active"/>
+    <field name="active"/>
+    <notebook colspan="4">
+        <page string="Fields" id="fields">
+            <label name="title_field"/>
+            <field name="title_field"/>
+            <label name="uri_field"/>
+            <field name="uri_field"/>
+            <label name="identifier_field"/>
+            <field name="identifier_field"/>
+            <label name="children_field"/>
+            <field name="children_field"/>
+        </page>
+        <page string="Description" id="description">
+            <field name="description" colspan="4"/>
+        </page>
+    </notebook>
+</form>

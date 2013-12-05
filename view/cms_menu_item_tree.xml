@@ -1,0 +1,7 @@
+<tree string="CMS Menuitems">
+    <field name="title"/>
+    <field name="unique_name"/>
+    <field name="rec_name" />
+    <field name="link"/>
+    <field name="active"/>
+</tree>

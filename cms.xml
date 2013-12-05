@@ -13,51 +13,12 @@
         <record model="ir.ui.view" id="cms_menus_view_form">
             <field name="model">nereid.cms.menu</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-            <![CDATA[
-                <form string="CMS Menu">
-                  <label name="name"/>
-                  <field name="name"/>
-                  <label name="unique_identifier"/>
-                  <field name="unique_identifier"/>
-                  <label name="website"/>
-                  <field name="website"/>
-                  <label name="model"/>
-                  <field name="model"/>
-                  <label name="active"/>
-                  <field name="active"/>
-                  <notebook colspan="4">
-                      <page string="Fields" id="fields">
-                          <label name="title_field"/>
-                          <field name="title_field"/>
-                          <label name="uri_field"/>
-                          <field name="uri_field"/>
-                          <label name="identifier_field"/>
-                          <field name="identifier_field"/>
-                          <label name="children_field"/>
-                          <field name="children_field"/>
-                      </page>
-                      <page string="Description" id="description">
-                          <field name="description" colspan="4"/>
-                      </page>
-                    </notebook>
-                </form>
-                ]]>
-            </field>
-          </record>
-          <record model="ir.ui.view" id="cms_menus_view_tree">
+            <field name="name">cms_menu_form</field>
+        </record>
+        <record model="ir.ui.view" id="cms_menus_view_tree">
               <field name="model">nereid.cms.menu</field>
               <field name="type">tree</field>
-              <field name="arch" type="xml">
-              <![CDATA[
-                <tree string="CMS Menus">
-                    <field name="name"/>
-                    <field name="unique_identifier"/>
-                    <field name="model"/>
-                    <field name="active"/>
-                </tree>
-                ]]>
-            </field>
+              <field name="name">cms_menu_tree</field>
         </record>
         <record model="ir.action.act_window" id="act_cms_menus_form">
             <field name="name">CMS Menus</field>
@@ -84,69 +45,20 @@
         <record model="ir.ui.view" id="cms_menuitems_view_form">
             <field name="model">nereid.cms.menuitem</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-            <![CDATA[
-                <form string="CMS Menuitems">
-                  <label name="title"/>
-                  <field name="title"/>
-                  <label name="unique_name"/>
-                  <field name="unique_name"/>
-                  <label name="rec_name"/>
-                  <field name="rec_name" colspan="3"/>
-                  <label name="parent"/>
-                  <field name="parent"/>
-                  <label name="active"/>
-                  <field name="active"/>
-                  <label name="sequence"/>
-                  <field name="sequence"/>
-                  <label name="reference"/>
-                  <field name="reference"/>
-                  <notebook colspan="4">
-                    <page string="Routing" id="routing">
-                      <label name="link"/>
-                      <field name="link"/>
-                      <label name="url_for_build"/>
-                      <field name="url_for_build"/>
-                      <label name="values_to_build"/>
-                      <field name="values_to_build"/>
-                    </page>
-                    <page string="Children" id="children">
-                      <field name="child" colspan="4"/>
-                    </page>
-                  </notebook>
-                  <newline />
-                </form>
-              ]]>
-            </field>
+            <field name="name">cms_menu_item_form</field>
         </record>
         <record model="ir.ui.view" id="cms_menuitems_view_tree">
             <field name="model">nereid.cms.menuitem</field>
             <field name="type">tree</field>
+            <field name="name">cms_menu_item_tree</field>
             <field name="priority">10</field>
-            <field name="arch" type="xml">
-            <![CDATA[
-                <tree string="CMS Menuitems">
-                    <field name="title"/>
-                    <field name="unique_name"/>
-                    <field name="rec_name" />
-                    <field name="link"/>
-                    <field name="active"/>
-                </tree>
-            ]]>
-            </field>
         </record>
         <record model="ir.ui.view" id="cms_menuitems_view_tree2">
             <field name="model">nereid.cms.menuitem</field>
             <field name="type">tree</field>
             <field name="priority">5</field>
+            <field name="name">cms_menu_item_tree2</field>
             <field name="field_childs">child</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                <tree string="CMS Menuitems">
-                    <field name="unique_name"/>
-                </tree>
-                ]]>
-            </field>
         </record>
         <record model="ir.action.act_window" id="act_cms_menuitems_tree">
             <field name="name">CMS Menuitems</field>
@@ -215,41 +127,13 @@
         <record model="ir.ui.view" id="cms_article_categ_view_form">
             <field name="model">nereid.cms.article.category</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <form string="CMS Article Category">
-                        <label name="title" />
-                        <field name="title" />
-                        <label name="unique_name" />
-                        <field name="unique_name" />
-                        <label name="active" />
-                        <field name="active" />
-                        <label name="template" />
-                        <field name="template" />
-                        <label name="banner" />
-                        <field name="banner" />
-                        <separator 
-                            colspan="4" 
-                            string="Description" 
-                            id="sepr_desc"/>
-                        <field name="description" colspan="4" />
-                    </form>
-                ]]>
-            </field>
+            <field name="name">cms_article_category_form</field>
         </record>
 
          <record model="ir.ui.view" id="cms_article_categ_view_tree">
             <field name="model">nereid.cms.article.category</field>
             <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <tree string="CMS Article Categories">
-                        <field name="title" />
-                        <field name="unique_name" />
-                        <field name="active" />
-                    </tree>
-                ]]>
-            </field>
+            <field name="name">cms_article_category_tree</field>
         </record>
 
         <record model="ir.action.act_window" id="action_cms_article_category">
@@ -276,67 +160,13 @@
         <record model="ir.ui.view" id="cms_article_view_form">
             <field name="model">nereid.cms.article</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <form string="CMS Article" col="6">
-                        <group colspan="6" col="4" id="definition">
-                            <label name="title" />
-                            <field name="title" />
-                            <label name="uri" />
-                            <field name="uri" />
-                            <newline />
-                            <label name="category" />
-                            <field name="category" />
-                            <label name="active" />
-                            <field name="active" />
-                            <newline />
-                            <label name="template" />
-                            <field name="template" />
-                            <label name="image"/>
-                            <field name="image"/>
-                        </group>
-                        <notebook colspan="6">                            
-                            <page string="Content" id="content">
-                                <field name="content"/>
-                            </page>
-                            <page string="Parameters" id="parameters">
-                                  <label name="sequence" />
-                                  <field name="sequence" />
-                                  <label name="author" />
-                                  <field name="author" />
-                                  <label name="published_on" />
-                                  <field name="published_on" />
-                                  <label name="banner" />
-                                  <field name="banner" />
-                                  <separator name="description" colspan="4"/>
-                                  <field name="description" colspan="4"/>
-                            </page>
-                            <page string="Attributes" id="attributes">
-                                <field name="attributes"/>
-                            </page>
-                        </notebook>
-                    </form>
-                ]]>
-            </field>
+            <field name="name">cms_article_form</field>
         </record>
 
          <record model="ir.ui.view" id="cms_article_view_tree">
             <field name="model">nereid.cms.article</field>
             <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <tree string="CMS Articles">
-                        <field name="title" />
-                        <field name="uri" />
-                        <field name="category" />
-                        <field name="sequence" />
-                        <field name="author" />
-                        <field name="create_date" />
-                        <field name="published_on" />
-                        <field name="active" />
-                    </tree>
-                ]]>
-            </field>
+            <field name="name">cms_article_tree</field>
         </record>
 
         <record model="ir.action.act_window" id="action_cms_articles">
@@ -370,39 +200,13 @@
         <record model="ir.ui.view" id="cms_banner_categ_view_form">
             <field name="model">nereid.cms.banner.category</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <form string="CMS Banner Category">
-                        <label name="name" />
-                        <field name="name" />
-                        <label name="website" />
-                        <field name="website" />
-                        <separator 
-                            colspan="4" 
-                            string="Banners" 
-                            id="sepr_banners"/>
-                        <field name="banners" colspan="4" />
-                        <separator 
-                            colspan="4" 
-                            string="Published Banners" 
-                            id="sepr_banners1"/>
-                        <field name="published_banners" colspan="4"/>
-                    </form>
-                ]]>
-            </field>
+            <field name="name">cms_banner_category_form</field>
         </record>
 
          <record model="ir.ui.view" id="cms_banner_categ_view_tree">
             <field name="model">nereid.cms.banner.category</field>
             <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <tree string="CMS Banner Categories">
-                        <field name="name" />
-                        <field name="website" />
-                    </tree>
-                ]]>
-            </field>
+            <field name="name">cms_banner_category_tree</field>
         </record>
 
         <record model="ir.action.act_window" id="action_cms_banner_category">
@@ -429,61 +233,13 @@
         <record model="ir.ui.view" id="cms_banner_view_form">
             <field name="model">nereid.cms.banner</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <form string="CMS Banner">
-                        <group colspan="6" col="4" id="definition">
-                            <label name="name" />
-                            <field name="name" />
-                            <label name="type" />
-                            <field name="type" />
-                            <newline />
-                            <label name="category" />
-                            <field name="category" />
-                            <label name="description" />
-                            <field name="description" />
-                            <newline />
-                            <separator id="sepr_image" string="Image" colspan="4"/>
-                            <label name="file" />
-                            <field name="file" />
-                            <label name="remote_image_url"/>
-                            <field name="remote_image_url"/>
-                            <label name="alternative_text"/>
-                            <field name="alternative_text"/>
-                            <newline />
-                            <label name="height"/>
-                            <field name="height"/>
-                            <label name="width"/>
-                            <field name="width"/>
-                            <newline />
-                            <label name="click_url"/>
-                            <field name="click_url"/>
-                            <newline />
-                            <separator id="sepr_custom" string="Custom Code" colspan="4"/>
-                            <field name="custom_code" colspan="4"/>
-                            <newline />
-                            <separator id="sepr_blank" string="" colspan="4"/>
-                            <label name="state"/>
-                            <field name="state" colspan="3"/>
-                        </group>
-                    </form>
-                ]]>
-            </field>
+            <field name="name">cms_banner_form</field>
         </record>
 
          <record model="ir.ui.view" id="cms_banner_view_tree">
             <field name="model">nereid.cms.banner</field>
             <field name="type">tree</field>
-            <field name="arch" type="xml">
-                <![CDATA[
-                    <tree string="CMS Banners">
-                        <field name="name" />
-                        <field name="type" />
-                        <field name="category" />
-                        <field name="state" />
-                    </tree>
-                ]]>
-            </field>
+            <field name="name">cms_banner_tree</field>
         </record>
 
         <record model="ir.action.act_window" id="action_cms_banners">
@@ -514,30 +270,12 @@
         <record model="ir.ui.view" id="cms_link_view_form">
             <field name="model">nereid.cms.link</field>
             <field name="type">form</field>
-            <field name="arch" type="xml">
-              <![CDATA[
-                <form string="CMS Link" col="6">
-                    <label name="name"/>
-                    <field name="name"/>
-                    <label name="model"/>
-                    <field name="model"/>
-                    <label name="priority"/>
-                    <field name="priority"/>
-                </form>
-                ]]>
-            </field>
+            <field name="name">cms_link_form</field>
         </record>
         <record model="ir.ui.view" id="cms_link_view_tree">
             <field name="model">nereid.cms.link</field>
             <field name="type">tree</field>
-            <field name="arch" type="xml">
-              <![CDATA[
-                <tree string="CMS Link">
-                    <field name="name" />
-                    <field name="model" />
-                </tree>
-                ]]>
-            </field>
+            <field name="name">cms_link_tree</field>
         </record>
         <record model="ir.action.act_window" id="act_cms_link_form">
             <field name="name">CMS Links</field>

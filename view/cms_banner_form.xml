@@ -1,0 +1,36 @@
+<form string="CMS Banner">
+    <group colspan="6" col="4" id="definition">
+        <label name="name" />
+        <field name="name" />
+        <label name="type" />
+        <field name="type" />
+        <newline />
+        <label name="category" />
+        <field name="category" />
+        <label name="description" />
+        <field name="description" />
+        <newline />
+        <separator id="sepr_image" string="Image" colspan="4"/>
+        <label name="file" />
+        <field name="file" />
+        <label name="remote_image_url"/>
+        <field name="remote_image_url"/>
+        <label name="alternative_text"/>
+        <field name="alternative_text"/>
+        <newline />
+        <label name="height"/>
+        <field name="height"/>
+        <label name="width"/>
+        <field name="width"/>
+        <newline />
+        <label name="click_url"/>
+        <field name="click_url"/>
+        <newline />
+        <separator id="sepr_custom" string="Custom Code" colspan="4"/>
+        <field name="custom_code" colspan="4"/>
+        <newline />
+        <separator id="sepr_blank" string="" colspan="4"/>
+        <label name="state"/>
+        <field name="state" colspan="3"/>
+    </group>
+</form>

@@ -1,0 +1,5 @@
+<tree string="CMS Article Categories">
+    <field name="title" />
+    <field name="unique_name" />
+    <field name="active" />
+</tree>
