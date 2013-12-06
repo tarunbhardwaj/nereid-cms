@@ -1,5 +1,5 @@
 <form string="CMS Banner">
-    <group col="6" colspan="4">
+    <group col="6" colspan="4" id="mainattrs">
         <label name="name" />
         <field name="name" />
         <label name="type" />
