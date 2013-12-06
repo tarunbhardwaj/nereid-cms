@@ -4,7 +4,6 @@
     <field name="category" />
     <field name="sequence" />
     <field name="author" />
-    <field name="create_date" />
     <field name="published_on" />
     <field name="active" />
 </tree>
