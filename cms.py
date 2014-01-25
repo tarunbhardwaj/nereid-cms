@@ -636,6 +636,9 @@ class Article(ModelSQL, ModelView):
     image = fields.Many2One('nereid.static.file', 'Image')
     author = fields.Many2One('company.employee', 'Author')
     published_on = fields.Date('Published On')
+    publish_date = fields.Function(
+        fields.Char('Publish Date'), 'get_publish_date'
+    )
     sequence = fields.Integer('Sequence', required=True, select=True)
     reference = fields.Reference('Reference', selection='links_get')
     description = fields.Text('Short Description')
@@ -714,6 +717,15 @@ class Article(ModelSQL, ModelView):
         sitemap_section = SitemapSection(cls, [], page)
         sitemap_section.changefreq = 'daily'
         return sitemap_section.render()
+
+    def get_publish_date(cls, records, name):
+        """
+        Return publish date to render on view
+        """
+        res = {}
+        for record in records:
+            res[record.id] = str(record.published_on)
+        return res
 
     def get_absolute_url(self, **kwargs):
         return url_for(
