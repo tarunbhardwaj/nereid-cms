@@ -718,6 +718,7 @@ class Article(ModelSQL, ModelView):
         sitemap_section.changefreq = 'daily'
         return sitemap_section.render()
 
+    @classmethod
     def get_publish_date(cls, records, name):
         """
         Return publish date to render on view
