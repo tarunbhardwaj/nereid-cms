@@ -3,7 +3,7 @@
 
     nereid_cms
 
-    :copyright: (c) 2010-2013 by Openlabs Technologies & Consulting (P) Ltd.
+    :copyright: (c) 2010-2014 by Openlabs Technologies & Consulting (P) Ltd.
     :license: GPLv3, see LICENSE for more details
 
 '''
@@ -11,7 +11,7 @@
 from trytond.pool import Pool
 from .cms import (
     CMSLink, Menu, MenuItem, BannerCategory, Banner, ArticleCategory,
-    Article, ArticleAttribute
+    Article, ArticleAttribute, Website, NereidStaticFile,
 )
 
 
@@ -28,5 +28,7 @@ def register():
         ArticleCategory,
         Article,
         ArticleAttribute,
+        NereidStaticFile,
+        Website,
         module='nereid_cms', type_='model'
     )

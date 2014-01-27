@@ -1,0 +1,7 @@
+<data>
+    <xpath expr="/form/field[@name='timezone']"
+            position="after">
+        <label name="cms_static_folder"/>
+        <field name="cms_static_folder"/>
+    </xpath>
+</data>
