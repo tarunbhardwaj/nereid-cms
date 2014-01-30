@@ -22,7 +22,13 @@
         </record>
 
         <record id="article_category_uri" model="nereid.url_rule">
-            <field name="rule">/article-category/&lt;uri&gt;</field>
+            <field name="rule">/article-category/&lt;uri&gt;/</field>
+            <field name="endpoint">nereid.cms.article.category.render</field>
+            <field name="sequence" eval="20" />
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="article_category_uri_page" model="nereid.url_rule">
+            <field name="rule">/article-category/&lt;uri&gt;/&lt;int:page&gt;</field>
             <field name="endpoint">nereid.cms.article.category.render</field>
             <field name="sequence" eval="20" />
             <field name="url_map" ref="nereid.default_url_map" />

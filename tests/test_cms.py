@@ -143,7 +143,7 @@ class TestCMS(NereidTestCase):
             self.setup_defaults()
             app = self.get_app()
             with app.test_client() as c:
-                response = c.get('/article-category/test-categ')
+                response = c.get('/article-category/test-categ/')
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.data, '1')
 
