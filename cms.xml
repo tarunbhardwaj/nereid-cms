@@ -266,6 +266,14 @@
             <field name="method">nereid.cms.banner.category.context_processor</field>
         </record>
 
+        <!-- Website -->
+        <record model="ir.ui.view" id="cms_website_view_form">
+            <field name="model">nereid.website</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="nereid.website_view_form" />
+            <field name="name">cms_website_form</field>
+        </record>
+
         <!-- CMS link -->
         <record model="ir.ui.view" id="cms_link_view_form">
             <field name="model">nereid.cms.link</field>

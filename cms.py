@@ -3,27 +3,33 @@
 
     Nereid CMS
 
-    :copyright: (c) 2010-2013 by Openlabs Technologies & Consulting (P) Ltd.
+    :copyright: (c) 2010-2014 by Openlabs Technologies & Consulting (P) Ltd.
     :license: GPLv3, see LICENSE for more details
 
 '''
+import time
 from string import Template
 
-from nereid import render_template, current_app, cache, request
+from nereid import (
+    render_template, current_app, cache, request, login_required, jsonify,
+    redirect, flash,
+)
 from nereid.helpers import slugify, url_for, key_from_list
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
 from werkzeug.exceptions import NotFound, InternalServerError
+from werkzeug.utils import secure_filename
 
 from trytond.pyson import Eval, Not, Equal, Bool, In
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
-from trytond.pool import Pool
+from trytond.pool import Pool, PoolMeta
 
 __all__ = [
-    'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner',
-    'ArticleCategory', 'Article', 'ArticleAttribute',
+    'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
+    'ArticleCategory', 'Article', 'ArticleAttribute', 'NereidStaticFile',
 ]
+__metaclass__ = PoolMeta
 
 
 class CMSLink(ModelSQL, ModelView):
@@ -756,3 +762,71 @@ class ArticleAttribute(ModelSQL, ModelView):
         'nereid.cms.article', 'Article', ondelete='CASCADE', required=True,
         select=True,
     )
+
+
+class NereidStaticFile:
+    "Nereid Static File"
+    __name__ = 'nereid.static.file'
+
+    def serialize(self):
+        """
+        Serialize this object
+        """
+        return {
+            'name': self.name,
+            'get_url': self.url,
+        }
+
+
+class Website:
+    "Nereid Website"
+    __name__ = 'nereid.website'
+
+    cms_static_folder = fields.Many2One(
+        'nereid.static.folder', "CMS Static Folder", ondelete='RESTRICT',
+        select=True,
+    )
+
+    @classmethod
+    @login_required
+    def cms_static_upload(cls, upload_type):
+        """
+        Upload the file for cms
+        """
+        StaticFile = Pool().get("nereid.static.file")
+
+        file = request.files['file']
+        if file:
+            static_file = StaticFile.create({
+                'folder': request.nereid_website.cms_static_folder,
+                'name': '_'.join([
+                    str(int(time.time())),
+                    secure_filename(file.filename),
+                ]),
+                'type': upload_type,
+                'file_binary': file.read(),
+            })
+            if request.is_xhr:
+                return jsonify(success=True, item=static_file.serialize())
+
+            flash("File uploaded")
+        if request.is_xhr:
+            return jsonify(success=False)
+        return redirect(request.referrer)
+
+    @classmethod
+    @login_required
+    def cms_static_list(cls, page=1):
+        """
+            Return JSON with list of all files inside cms static folder
+        """
+        StaticFile = Pool().get("nereid.static.file")
+
+        files = Pagination(
+            StaticFile, [
+                ('folder', '=', request.nereid_website.cms_static_folder.id)
+            ], page, 10
+        )
+        return jsonify(items=[
+            item.serialize() for item in files
+        ])

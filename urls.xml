@@ -40,5 +40,27 @@
             <field name="url_map" ref="nereid.default_url_map" />
         </record>
 
+        <record id="cms_static_upload" model="nereid.url_rule">
+            <field name="rule">/cms/upload/&lt;upload_type&gt;</field>
+            <field name="endpoint">nereid.website.cms_static_upload</field>
+            <field name="sequence" eval="10" />
+            <field name="http_method_post" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="cms_static_list" model="nereid.url_rule">
+            <field name="rule">/cms/browse/</field>
+            <field name="endpoint">nereid.website.cms_static_list</field>
+            <field name="sequence" eval="10" />
+            <field name="http_method_get" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="cms_static_list_page" model="nereid.url_rule">
+            <field name="rule">/cms/browse/&lt;int:page&gt;</field>
+            <field name="endpoint">nereid.website.cms_static_list</field>
+            <field name="sequence" eval="10" />
+            <field name="http_method_get" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+
     </data>
 </tryton>
