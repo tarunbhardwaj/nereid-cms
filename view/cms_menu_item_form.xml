@@ -1,0 +1,29 @@
+<form string="CMS Menuitem">
+    <label name="title"/>
+    <field name="title"/>
+    <label name="unique_name"/>
+    <field name="unique_name"/>
+    <label name="rec_name"/>
+    <field name="rec_name" colspan="3"/>
+    <label name="parent"/>
+    <field name="parent"/>
+    <label name="active"/>
+    <field name="active"/>
+    <label name="sequence"/>
+    <field name="sequence"/>
+    <label name="reference"/>
+    <field name="reference"/>
+    <notebook colspan="4">
+        <page string="Routing" id="routing">
+            <label name="link"/>
+            <field name="link"/>
+            <label name="url_for_build"/>
+            <field name="url_for_build"/>
+            <label name="values_to_build"/>
+            <field name="values_to_build"/>
+        </page>
+        <page string="Children" id="children">
+            <field name="child" colspan="4"/>
+        </page>
+    </notebook>
+</form>

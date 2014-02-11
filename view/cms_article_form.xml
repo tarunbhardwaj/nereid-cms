@@ -1,0 +1,38 @@
+<form string="CMS Article" col="6">
+    <group colspan="6" col="4" id="definition">
+        <label name="title" />
+        <field name="title" />
+        <label name="uri" />
+        <field name="uri" />
+        <newline />
+        <label name="category" />
+        <field name="category" />
+        <label name="active" />
+        <field name="active" />
+        <newline />
+        <label name="template" />
+        <field name="template" />
+        <label name="image"/>
+        <field name="image"/>
+    </group>
+    <notebook colspan="6">                            
+        <page string="Content" id="content">
+            <field name="content"/>
+        </page>
+        <page string="Parameters" id="parameters">
+            <label name="sequence" />
+            <field name="sequence" />
+            <label name="author" />
+            <field name="author" />
+            <label name="published_on" />
+            <field name="published_on" />
+            <label name="banner" />
+            <field name="banner" />
+            <separator name="description" colspan="4"/>
+            <field name="description" colspan="4"/>
+        </page>
+        <page string="Attributes" id="attributes">
+            <field name="attributes"/>
+        </page>
+    </notebook>
+</form>

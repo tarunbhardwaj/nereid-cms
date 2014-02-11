@@ -1,0 +1,4 @@
+<tree string="CMS Link">
+    <field name="name" />
+    <field name="model" />
+</tree>

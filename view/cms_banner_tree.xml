@@ -1,0 +1,6 @@
+<tree string="CMS Banners">
+    <field name="name" />
+    <field name="type" />
+    <field name="category" />
+    <field name="state" />
+</tree>

@@ -1,0 +1,8 @@
+<form string="CMS Link" col="6">
+    <label name="name"/>
+    <field name="name"/>
+    <label name="model"/>
+    <field name="model"/>
+    <label name="priority"/>
+    <field name="priority"/>
+</form>

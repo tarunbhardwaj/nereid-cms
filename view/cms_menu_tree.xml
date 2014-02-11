@@ -1,0 +1,6 @@
+<tree string="CMS Menus">
+    <field name="name"/>
+    <field name="unique_identifier"/>
+    <field name="model"/>
+    <field name="active"/>
+</tree>

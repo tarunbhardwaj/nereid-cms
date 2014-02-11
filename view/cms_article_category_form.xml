@@ -1,0 +1,17 @@
+<form string="CMS Article Category">
+    <label name="title" />
+    <field name="title" />
+    <label name="unique_name" />
+    <field name="unique_name" />
+    <label name="active" />
+    <field name="active" />
+    <label name="template" />
+    <field name="template" />
+    <label name="banner" />
+    <field name="banner" />
+    <separator 
+        colspan="4" 
+        string="Description" 
+        id="sepr_desc"/>
+    <field name="description" colspan="4" />
+</form>

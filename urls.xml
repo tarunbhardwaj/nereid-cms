@@ -22,7 +22,13 @@
         </record>
 
         <record id="article_category_uri" model="nereid.url_rule">
-            <field name="rule">/article-category/&lt;uri&gt;</field>
+            <field name="rule">/article-category/&lt;uri&gt;/</field>
+            <field name="endpoint">nereid.cms.article.category.render</field>
+            <field name="sequence" eval="20" />
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="article_category_uri_page" model="nereid.url_rule">
+            <field name="rule">/article-category/&lt;uri&gt;/&lt;int:page&gt;</field>
             <field name="endpoint">nereid.cms.article.category.render</field>
             <field name="sequence" eval="20" />
             <field name="url_map" ref="nereid.default_url_map" />
@@ -37,6 +43,28 @@
             <field name="rule">/sitemaps/article-category-&lt;int:page&gt;.xml</field>
             <field name="endpoint">nereid.cms.article.category.sitemap</field>
             <field name="sequence" eval="10" />
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+
+        <record id="cms_static_upload" model="nereid.url_rule">
+            <field name="rule">/cms/upload/&lt;upload_type&gt;</field>
+            <field name="endpoint">nereid.website.cms_static_upload</field>
+            <field name="sequence" eval="10" />
+            <field name="http_method_post" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="cms_static_list" model="nereid.url_rule">
+            <field name="rule">/cms/browse/</field>
+            <field name="endpoint">nereid.website.cms_static_list</field>
+            <field name="sequence" eval="10" />
+            <field name="http_method_get" eval="True"/>
+            <field name="url_map" ref="nereid.default_url_map" />
+        </record>
+        <record id="cms_static_list_page" model="nereid.url_rule">
+            <field name="rule">/cms/browse/&lt;int:page&gt;</field>
+            <field name="endpoint">nereid.website.cms_static_list</field>
+            <field name="sequence" eval="10" />
+            <field name="http_method_get" eval="True"/>
             <field name="url_map" ref="nereid.default_url_map" />
         </record>
 

@@ -3,27 +3,33 @@
 
     Nereid CMS
 
-    :copyright: (c) 2010-2013 by Openlabs Technologies & Consulting (P) Ltd.
+    :copyright: (c) 2010-2014 by Openlabs Technologies & Consulting (P) Ltd.
     :license: GPLv3, see LICENSE for more details
 
 '''
+import time
 from string import Template
 
-from nereid import render_template, current_app, cache, request
+from nereid import (
+    render_template, current_app, cache, request, login_required, jsonify,
+    redirect, flash,
+)
 from nereid.helpers import slugify, url_for, key_from_list
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
 from werkzeug.exceptions import NotFound, InternalServerError
+from werkzeug.utils import secure_filename
 
 from trytond.pyson import Eval, Not, Equal, Bool, In
-from trytond.model import ModelSQL, ModelView, fields
+from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
-from trytond.pool import Pool
+from trytond.pool import Pool, PoolMeta
 
 __all__ = [
-    'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner',
-    'ArticleCategory', 'Article', 'ArticleAttribute',
+    'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
+    'ArticleCategory', 'Article', 'ArticleAttribute', 'NereidStaticFile',
 ]
+__metaclass__ = PoolMeta
 
 
 class CMSLink(ModelSQL, ModelView):
@@ -315,7 +321,10 @@ class BannerCategory(ModelSQL, ModelView):
     __name__ = 'nereid.cms.banner.category'
 
     name = fields.Char('Name', required=True, select=True)
-    banners = fields.One2Many('nereid.cms.banner', 'category', 'Banners')
+    banners = fields.One2Many(
+        'nereid.cms.banner', 'category', 'Banners',
+        context={'published': True}
+    )
     website = fields.Many2One('nereid.website', 'WebSite', select=True)
     published_banners = fields.Function(
         fields.One2Many(
@@ -361,12 +370,12 @@ class BannerCategory(ModelSQL, ModelView):
         return res
 
 
-class Banner(ModelSQL, ModelView):
+class Banner(Workflow, ModelSQL, ModelView):
     """Banner for CMS."""
     __name__ = 'nereid.cms.banner'
 
     name = fields.Char('Name', required=True, select=True)
-    description = fields.Char('Description')
+    description = fields.Text('Description')
     category = fields.Many2One(
         'nereid.cms.banner.category', 'Category', required=True, select=True
     )
@@ -414,7 +423,7 @@ class Banner(ModelSQL, ModelView):
         }
     )
     alternative_text = fields.Char(
-        'Alternative Text',
+        'Alternative Text', translate=True,
         states={
             'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
         }
@@ -427,15 +436,41 @@ class Banner(ModelSQL, ModelView):
     )
 
     state = fields.Selection([
-        ('published', 'Published'),
-        ('archived', 'Archived')
-    ], 'State', required=True, select=True)
+            ('draft', 'Draft'),
+            ('published', 'Published'),
+            ('archived', 'Archived')
+    ], 'State', required=True, select=True, readonly=True)
     reference = fields.Reference('Reference', selection='links_get')
 
     @classmethod
     def __setup__(cls):
         super(Banner, cls).__setup__()
         cls._order.insert(0, ('sequence', 'ASC'))
+        cls._transitions |= set((
+                ('draft', 'published'),
+                ('archived', 'published'),
+                ('published', 'archived'),
+        ))
+        cls._buttons.update({
+            'archive': {
+                'invisible': Eval('state') != 'published',
+            },
+            'publish': {
+                'invisible': Eval('state') == 'published',
+            }
+        })
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('archived')
+    def archive(cls, banners):
+        pass
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('published')
+    def publish(cls, banners):
+        pass
 
     def get_html(self):
         """Return the HTML content"""
@@ -475,6 +510,16 @@ class Banner(ModelSQL, ModelView):
     def links_get():
         CMSLink = Pool().get('nereid.cms.link')
         return [('', '')] + [(x.model, x.name) for x in CMSLink.search([])]
+
+    @staticmethod
+    def default_type():
+        return 'image'
+
+    @staticmethod
+    def default_state():
+        if 'published' in Transaction().context:
+            return 'published'
+        return 'draft'
 
 
 class ArticleCategory(ModelSQL, ModelView):
@@ -520,7 +565,7 @@ class ArticleCategory(ModelSQL, ModelView):
     def on_change_title(self):
         res = {}
         if self.title and not self.unique_name:
-            res['title'] = slugify(self.title)
+            res['unique_name'] = slugify(self.title)
         return res
 
     @classmethod
@@ -597,6 +642,9 @@ class Article(ModelSQL, ModelView):
     image = fields.Many2One('nereid.static.file', 'Image')
     author = fields.Many2One('company.employee', 'Author')
     published_on = fields.Date('Published On')
+    publish_date = fields.Function(
+        fields.Char('Publish Date'), 'get_publish_date'
+    )
     sequence = fields.Integer('Sequence', required=True, select=True)
     reference = fields.Reference('Reference', selection='links_get')
     description = fields.Text('Short Description')
@@ -676,6 +724,16 @@ class Article(ModelSQL, ModelView):
         sitemap_section.changefreq = 'daily'
         return sitemap_section.render()
 
+    @classmethod
+    def get_publish_date(cls, records, name):
+        """
+        Return publish date to render on view
+        """
+        res = {}
+        for record in records:
+            res[record.id] = str(record.published_on)
+        return res
+
     def get_absolute_url(self, **kwargs):
         return url_for(
             'nereid.cms.article.render', uri=self.uri, **kwargs
@@ -704,3 +762,71 @@ class ArticleAttribute(ModelSQL, ModelView):
         'nereid.cms.article', 'Article', ondelete='CASCADE', required=True,
         select=True,
     )
+
+
+class NereidStaticFile:
+    "Nereid Static File"
+    __name__ = 'nereid.static.file'
+
+    def serialize(self):
+        """
+        Serialize this object
+        """
+        return {
+            'name': self.name,
+            'get_url': self.url,
+        }
+
+
+class Website:
+    "Nereid Website"
+    __name__ = 'nereid.website'
+
+    cms_static_folder = fields.Many2One(
+        'nereid.static.folder', "CMS Static Folder", ondelete='RESTRICT',
+        select=True,
+    )
+
+    @classmethod
+    @login_required
+    def cms_static_upload(cls, upload_type):
+        """
+        Upload the file for cms
+        """
+        StaticFile = Pool().get("nereid.static.file")
+
+        file = request.files['file']
+        if file:
+            static_file = StaticFile.create({
+                'folder': request.nereid_website.cms_static_folder,
+                'name': '_'.join([
+                    str(int(time.time())),
+                    secure_filename(file.filename),
+                ]),
+                'type': upload_type,
+                'file_binary': file.read(),
+            })
+            if request.is_xhr:
+                return jsonify(success=True, item=static_file.serialize())
+
+            flash("File uploaded")
+        if request.is_xhr:
+            return jsonify(success=False)
+        return redirect(request.referrer)
+
+    @classmethod
+    @login_required
+    def cms_static_list(cls, page=1):
+        """
+            Return JSON with list of all files inside cms static folder
+        """
+        StaticFile = Pool().get("nereid.static.file")
+
+        files = Pagination(
+            StaticFile, [
+                ('folder', '=', request.nereid_website.cms_static_folder.id)
+            ], page, 10
+        )
+        return jsonify(items=[
+            item.serialize() for item in files
+        ])

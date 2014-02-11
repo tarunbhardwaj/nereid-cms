@@ -1,0 +1,58 @@
+<form string="CMS Banner">
+    <group col="6" colspan="4" id="mainattrs">
+        <label name="name" />
+        <field name="name" />
+        <label name="type" />
+        <field name="type" />
+        <label name="category" />
+        <field name="category" />
+    </group>
+    <notebook>
+        <page id="description" string="Description">
+            <field name="description" colspan="4"/>
+        </page>
+        <page id="image" string="Image"
+                states="{'invisible': Eval('type') == 'custom_code'}">
+            <separator id="image_to_display"
+                string="The image to be displayed as a banner:"
+                colspan="4"/>
+            <label name="file"/>
+            <field name="file" colspan="3"/>
+            <label name="remote_image_url"/>
+            <field name="remote_image_url" colspan="3"/>
+            <separator id="click_url"
+                string="Link to go to when the image is clicked:"
+                colspan="4"/>
+            <field name="click_url" colspan="4"/>
+            <separator id="alternative_text"
+                string="Alternate text for an image, if the image cannot be displayed:"
+                colspan="4"/>
+            <field name="alternative_text" colspan="4"/>
+
+            <separator id="dimensions"
+                string="Dimension of the image"
+                colspan="2"/>
+            <newline/>
+            <label name="height"/>
+            <field name="height"/>
+            <newline/>
+            <label name="width"/>
+            <field name="width"/>
+        </page>
+        <page id="custom_code" string="Custom Code"
+                states="{'invisible': Eval('type') != 'custom_code'}">
+            <separator id="custom_code"
+                string="Write the custom code below and the code would be placed in lieu of the banner"
+                colspan="4"/>
+            <field name="custom_code" colspan="4"/>
+        </page>
+
+    </notebook>
+    <field name="state" colspan="2"/>
+    <group col="2" colspan="2" id="buttons">
+        <button name="archive" string="Archive"
+            icon="tryton-cancel"/>
+        <button name="publish" string="Publish"
+            icon="tryton-go-next"/>
+    </group>
+</form>

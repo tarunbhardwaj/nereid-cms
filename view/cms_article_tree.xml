@@ -1,0 +1,9 @@
+<tree string="CMS Articles">
+    <field name="title" />
+    <field name="uri" />
+    <field name="category" />
+    <field name="sequence" />
+    <field name="author" />
+    <field name="publish_date" />
+    <field name="active" />
+</tree>
