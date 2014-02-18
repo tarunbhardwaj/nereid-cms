@@ -12,12 +12,11 @@ from string import Template
 
 from nereid import (
     render_template, current_app, cache, request, login_required, jsonify,
-    redirect, flash,
+    redirect, flash, abort
 )
 from nereid.helpers import slugify, url_for, key_from_list
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
-from werkzeug.exceptions import NotFound, InternalServerError
 from werkzeug.utils import secure_filename
 
 from trytond.pyson import Eval, Not, Equal, Bool, In
@@ -184,7 +183,7 @@ class Menu(ModelSQL, ModelView):
         except ValueError:
             current_app.logger.error(
                 "Menu %s could not be identified" % identifier)
-            return NotFound()
+            abort(404)
 
         # Get the data from the model
         MenuItem = Pool().get(menu.model.model)
@@ -195,7 +194,7 @@ class Menu(ModelSQL, ModelView):
         except ValueError:
             current_app.logger.error(
                 "Menu %s could not be identified" % ident_field_value)
-            return InternalServerError()
+            abort(500)
 
         if objectified:
             return root_menu_item
@@ -579,7 +578,7 @@ class ArticleCategory(ModelSQL, ModelView):
         try:
             category, = cls.search([('unique_name', '=', uri)])
         except ValueError:
-            return NotFound()
+            abort(404)
 
         articles = Pagination(
             Article, [('category', '=', category.id)], page, cls.per_page
@@ -710,7 +709,7 @@ class Article(ModelSQL, ModelView):
         try:
             article, = cls.search([('uri', '=', uri)])
         except ValueError:
-            return NotFound()
+            abort(404)
         return render_template(article.template, article=article)
 
     @classmethod
