@@ -24,6 +24,7 @@ from trytond.pyson import Eval, Not, Equal, Bool, In
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
+from trytond import backend
 
 __all__ = [
     'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
@@ -640,7 +641,8 @@ class Article(ModelSQL, ModelView):
         required=True, select=True
     )
     image = fields.Many2One('nereid.static.file', 'Image')
-    author = fields.Many2One('company.employee', 'Author')
+    employee = fields.Many2One('company.employee', 'Employee')
+    author = fields.Many2One('nereid.user', 'Author')
     published_on = fields.Date('Published On')
     publish_date = fields.Function(
         fields.Char('Publish Date'), 'get_publish_date'
@@ -654,6 +656,18 @@ class Article(ModelSQL, ModelView):
 
     # Article can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+
+        table = TableHandler(cursor, cls, module_name)
+
+        if not table.column_exist('employee'):
+            table.column_rename('author', 'employee')
+
+        super(Article, cls).__register__(module_name)
 
     @classmethod
     def __setup__(cls):
