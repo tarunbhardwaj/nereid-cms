@@ -18,6 +18,7 @@ from nereid.helpers import slugify, url_for, key_from_list
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
 from werkzeug.utils import secure_filename
+from nereid.ctx import has_request_context
 
 from trytond.pyson import Eval, Not, Equal, Bool, In
 from trytond.model import ModelSQL, ModelView, fields, Workflow
@@ -693,22 +694,23 @@ class Article(ModelSQL, ModelView):
         return 'article.jinja'
 
     @staticmethod
-    def default_author():
+    def default_employee():
         User = Pool().get('res.user')
 
-        context = Transaction().context
-        if context is None:
-            context = {}
-        employee_id = None
-        if context.get('employee'):
-            employee_id = context['employee']
-        else:
-            user = User(Transaction().user)
-            if user.employee:
-                employee_id = user.employee.id
-        if employee_id:
-            return employee_id
-        return None
+        if 'employee' in Transaction().context:
+            return Transaction().context['employee']
+
+        user = User(Transaction().user)
+        if user.employee:
+            return user.employee.id
+
+        if has_request_context() and request.nereid_user.employee:
+            return request.nereid_user.employee.id
+
+    @staticmethod
+    def default_author():
+        if has_request_context():
+            return request.nereid_user.id
 
     @staticmethod
     def default_published_on():
