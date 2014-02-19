@@ -12,18 +12,19 @@ from string import Template
 
 from nereid import (
     render_template, current_app, cache, request, login_required, jsonify,
-    redirect, flash,
+    redirect, flash, abort
 )
 from nereid.helpers import slugify, url_for, key_from_list
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
-from werkzeug.exceptions import NotFound, InternalServerError
 from werkzeug.utils import secure_filename
+from nereid.ctx import has_request_context
 
 from trytond.pyson import Eval, Not, Equal, Bool, In
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
+from trytond import backend
 
 __all__ = [
     'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
@@ -184,7 +185,7 @@ class Menu(ModelSQL, ModelView):
         except ValueError:
             current_app.logger.error(
                 "Menu %s could not be identified" % identifier)
-            return NotFound()
+            abort(404)
 
         # Get the data from the model
         MenuItem = Pool().get(menu.model.model)
@@ -195,7 +196,7 @@ class Menu(ModelSQL, ModelView):
         except ValueError:
             current_app.logger.error(
                 "Menu %s could not be identified" % ident_field_value)
-            return InternalServerError()
+            abort(500)
 
         if objectified:
             return root_menu_item
@@ -579,7 +580,7 @@ class ArticleCategory(ModelSQL, ModelView):
         try:
             category, = cls.search([('unique_name', '=', uri)])
         except ValueError:
-            return NotFound()
+            abort(404)
 
         articles = Pagination(
             Article, [('category', '=', category.id)], page, cls.per_page
@@ -640,7 +641,8 @@ class Article(ModelSQL, ModelView):
         required=True, select=True
     )
     image = fields.Many2One('nereid.static.file', 'Image')
-    author = fields.Many2One('company.employee', 'Author')
+    employee = fields.Many2One('company.employee', 'Employee')
+    author = fields.Many2One('nereid.user', 'Author')
     published_on = fields.Date('Published On')
     publish_date = fields.Function(
         fields.Char('Publish Date'), 'get_publish_date'
@@ -654,6 +656,18 @@ class Article(ModelSQL, ModelView):
 
     # Article can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+
+        table = TableHandler(cursor, cls, module_name)
+
+        if not table.column_exist('employee'):
+            table.column_rename('author', 'employee')
+
+        super(Article, cls).__register__(module_name)
 
     @classmethod
     def __setup__(cls):
@@ -680,22 +694,23 @@ class Article(ModelSQL, ModelView):
         return 'article.jinja'
 
     @staticmethod
-    def default_author():
+    def default_employee():
         User = Pool().get('res.user')
 
-        context = Transaction().context
-        if context is None:
-            context = {}
-        employee_id = None
-        if context.get('employee'):
-            employee_id = context['employee']
-        else:
-            user = User(Transaction().user)
-            if user.employee:
-                employee_id = user.employee.id
-        if employee_id:
-            return employee_id
-        return None
+        if 'employee' in Transaction().context:
+            return Transaction().context['employee']
+
+        user = User(Transaction().user)
+        if user.employee:
+            return user.employee.id
+
+        if has_request_context() and request.nereid_user.employee:
+            return request.nereid_user.employee.id
+
+    @staticmethod
+    def default_author():
+        if has_request_context():
+            return request.nereid_user.id
 
     @staticmethod
     def default_published_on():
@@ -710,7 +725,7 @@ class Article(ModelSQL, ModelView):
         try:
             article, = cls.search([('uri', '=', uri)])
         except ValueError:
-            return NotFound()
+            abort(404)
         return render_template(article.template, article=article)
 
     @classmethod
