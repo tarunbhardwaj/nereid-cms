@@ -545,6 +545,14 @@ class ArticleCategory(ModelSQL, ModelView):
 
     # Article Category can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
+    sort_order = fields.Selection([
+        ('older_first', 'Older First'),
+        ('recent_first', 'Recent First'),
+    ], 'Sort Order')
+
+    @staticmethod
+    def default_sort_order():
+        return 'recent_first'
 
     @staticmethod
     def default_active():
@@ -582,8 +590,15 @@ class ArticleCategory(ModelSQL, ModelView):
         except ValueError:
             abort(404)
 
+        order = []
+        if category.sort_order == 'recent_first':
+            order.append(('write_date', 'DESC'))
+        elif category.sort_order == 'older_first':
+            order.append(('write_date', 'ASC'))
+
         articles = Pagination(
-            Article, [('category', '=', category.id)], page, cls.per_page
+            Article, [('category', '=', category.id)], page, cls.per_page,
+            order=order
         )
         return render_template(
             category.template, category=category, articles=articles)
