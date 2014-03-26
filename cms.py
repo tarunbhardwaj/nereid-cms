@@ -270,7 +270,7 @@ class MenuItem(ModelSQL, ModelView):
     reference = fields.Reference('Reference', selection='links_get')
 
     def get_full_url(self, name):
-        #TODO
+        # TODO
         return ''
 
     @staticmethod
