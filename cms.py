@@ -541,7 +541,10 @@ class ArticleCategory(ModelSQL, ModelView):
     active = fields.Boolean('Active', select=True)
     description = fields.Text('Description', translate=True)
     template = fields.Char('Template', required=True)
-    articles = fields.One2Many('nereid.cms.article', 'category', 'Articles')
+    articles = fields.One2Many(
+        'nereid.cms.article', 'category', 'Articles',
+        context={'published': True}
+    )
 
     # Article Category can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
@@ -549,6 +552,11 @@ class ArticleCategory(ModelSQL, ModelView):
         ('older_first', 'Older First'),
         ('recent_first', 'Recent First'),
     ], 'Sort Order')
+    published_articles = fields.Function(
+        fields.One2Many(
+            'nereid.cms.article', 'category', 'Published Articles'
+        ), 'get_published_articles'
+    )
 
     @staticmethod
     def default_sort_order():
@@ -640,8 +648,20 @@ class ArticleCategory(ModelSQL, ModelView):
             uri=self.unique_name, **kwargs
         )
 
+    def get_published_articles(self, name):
+        """
+        Get the published articles.
+        """
+        NereidArticle = Pool().get('nereid.cms.article')
 
-class Article(ModelSQL, ModelView):
+        articles = NereidArticle.search([
+            ('state', '=', 'published'),
+            ('category', '=', self.id)
+        ])
+        return map(int, articles)
+
+
+class Article(Workflow, ModelSQL, ModelView):
     "CMS Articles"
     __name__ = 'nereid.cms.article'
     _rec_name = 'uri'
@@ -671,6 +691,11 @@ class Article(ModelSQL, ModelView):
 
     # Article can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
+    state = fields.Selection([
+        ('draft', 'Draft'),
+        ('published', 'Published'),
+        ('archived', 'Archived')
+    ], 'State', required=True, select=True, readonly=True)
 
     @classmethod
     def __register__(cls, module_name):
@@ -688,6 +713,31 @@ class Article(ModelSQL, ModelView):
     def __setup__(cls):
         super(Article, cls).__setup__()
         cls._order.insert(0, ('sequence', 'ASC'))
+        cls._transitions |= set((
+                ('draft', 'published'),
+                ('archived', 'draft'),
+                ('published', 'archived'),
+        ))
+        cls._buttons.update({
+            'archive': {
+                'invisible': Eval('state') != 'published',
+            },
+            'publish': {
+                'invisible': Eval('state') == 'published',
+            }
+        })
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('archived')
+    def archive(cls, articles):
+        pass
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('published')
+    def publish(cls, articles):
+        pass
 
     @staticmethod
     def links_get():
@@ -768,6 +818,12 @@ class Article(ModelSQL, ModelView):
         return url_for(
             'nereid.cms.article.render', uri=self.uri, **kwargs
         )
+
+    @staticmethod
+    def default_state():
+        if 'published' in Transaction().context:
+            return 'published'
+        return 'draft'
 
 
 class ArticleAttribute(ModelSQL, ModelView):
