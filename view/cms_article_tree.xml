@@ -6,4 +6,5 @@
     <field name="author" />
     <field name="publish_date" />
     <field name="active" />
+    <field name="state" />
 </tree>
