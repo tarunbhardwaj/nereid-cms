@@ -12,7 +12,7 @@ from string import Template
 
 from nereid import (
     render_template, current_app, cache, request, login_required, jsonify,
-    redirect, flash, abort
+    redirect, flash, abort, route
 )
 from nereid.helpers import slugify, url_for, key_from_list
 from nereid.contrib.pagination import Pagination
@@ -586,6 +586,8 @@ class ArticleCategory(ModelSQL, ModelView):
         return res
 
     @classmethod
+    @route('/article-category/<uri>/')
+    @route('/article-category/<uri>/<int:page>')
     def render(cls, uri, page=1):
         """
         Renders the category
@@ -632,11 +634,13 @@ class ArticleCategory(ModelSQL, ModelView):
         return {'get_article_category': cls.get_article_category}
 
     @classmethod
+    @route('/sitemaps/article-category-index.xml')
     def sitemap_index(cls):
         index = SitemapIndex(cls, [])
         return index.render()
 
     @classmethod
+    @route('/sitemaps/article-category-<int:page>.xml')
     def sitemap(cls, page):
         sitemap_section = SitemapSection(cls, [], page)
         sitemap_section.changefreq = 'daily'
@@ -783,6 +787,7 @@ class Article(Workflow, ModelSQL, ModelView):
         return Date.today()
 
     @classmethod
+    @route('/article/<uri>')
     def render(cls, uri):
         """
         Renders the template
@@ -794,11 +799,13 @@ class Article(Workflow, ModelSQL, ModelView):
         return render_template(article.template, article=article)
 
     @classmethod
+    @route('/sitemaps/article-index.xml')
     def sitemap_index(cls):
         index = SitemapIndex(cls, [])
         return index.render()
 
     @classmethod
+    @route('/sitemaps/article-<int:page>.xml')
     def sitemap(cls, page):
         sitemap_section = SitemapSection(cls, [], page)
         sitemap_section.changefreq = 'daily'
@@ -874,6 +881,7 @@ class Website:
     )
 
     @classmethod
+    @route('/cms/upload/<upload_type>', methods=['POST'])
     @login_required
     def cms_static_upload(cls, upload_type):
         """
@@ -901,6 +909,8 @@ class Website:
         return redirect(request.referrer)
 
     @classmethod
+    @route('/cms/browse', methods=['POST'])
+    @route('/cms/browse/<int:page>', methods=['GET'])
     @login_required
     def cms_static_list(cls, page=1):
         """
