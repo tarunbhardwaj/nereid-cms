@@ -719,15 +719,19 @@ class Article(Workflow, ModelSQL, ModelView):
         cls._order.insert(0, ('sequence', 'ASC'))
         cls._transitions |= set((
                 ('draft', 'published'),
-                ('archived', 'draft'),
+                ('published', 'draft'),
                 ('published', 'archived'),
+                ('archived', 'draft'),
         ))
         cls._buttons.update({
             'archive': {
                 'invisible': Eval('state') != 'published',
             },
             'publish': {
-                'invisible': Eval('state') == 'published',
+                'invisible': Eval('state').in_(['published', 'archived']),
+            },
+            'draft': {
+                'invisible': Eval('state') == 'draft',
             }
         })
 
@@ -741,6 +745,12 @@ class Article(Workflow, ModelSQL, ModelView):
     @ModelView.button
     @Workflow.transition('published')
     def publish(cls, articles):
+        pass
+
+    @classmethod
+    @ModelView.button
+    @Workflow.transition('draft')
+    def draft(cls, articles):
         pass
 
     @staticmethod
@@ -793,7 +803,10 @@ class Article(Workflow, ModelSQL, ModelView):
         Renders the template
         """
         try:
-            article, = cls.search([('uri', '=', uri)])
+            article, = cls.search([
+                ('uri', '=', uri),
+                ('state', '=', 'published'),
+            ])
         except ValueError:
             abort(404)
         return render_template(article.template, article=article)
