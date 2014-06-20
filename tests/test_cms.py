@@ -211,6 +211,13 @@ class TestCMS(NereidTestCase):
         with Transaction().start(DB_NAME, USER, CONTEXT):
             self.setup_defaults()
             app = self.get_app()
+
+            # Publish the article first
+            article, = self.Article.search([
+                ('uri', '=', 'test-article')
+            ])
+            self.Article.publish([article])
+
             with app.test_client() as c:
                 response = c.get('/article/test-article')
                 self.assertEqual(response.status_code, 200)
