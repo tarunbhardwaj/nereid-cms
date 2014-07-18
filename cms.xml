@@ -275,6 +275,9 @@
         </record>
 
         <!-- CMS link -->
+        <menuitem id="menu_cms_configuration" name="Configuration" 
+            parent="menu_nereid_cms" />
+
         <record model="ir.ui.view" id="cms_link_view_form">
             <field name="model">nereid.cms.link</field>
             <field name="type">form</field>
@@ -301,7 +304,7 @@
             <field name="view" ref="cms_link_view_form"/>
             <field name="act_window" ref="act_cms_link_form"/>
         </record>
-        <menuitem parent="menu_nereid_cms" action="act_cms_link_form" 
+        <menuitem parent="menu_cms_configuration" action="act_cms_link_form" 
             id="menu_cms_link_form" />
 
         <!-- Model Access -->

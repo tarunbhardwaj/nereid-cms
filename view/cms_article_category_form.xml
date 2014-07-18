@@ -9,9 +9,15 @@
     <field name="template" />
     <label name="banner" />
     <field name="banner" />
-    <separator 
-        colspan="4" 
-        string="Description" 
+    <field name="articles" colspan="4" />
+    <separator
+        colspan="4"
+        string="Description"
         id="sepr_desc"/>
     <field name="description" colspan="4" />
+    <separator
+        colspan="4"
+        string="Published Articles"
+        id="sepr_articles1"/>
+    <field name="published_articles" colspan="4"/>
 </form>

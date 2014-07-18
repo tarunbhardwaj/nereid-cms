@@ -35,4 +35,13 @@
             <field name="attributes"/>
         </page>
     </notebook>
+    <field name="state" colspan="2"/>
+    <group col="3" colspan="3" id="buttons">
+        <button name="archive" string="Archive"
+            icon="tryton-cancel"/>
+        <button name="publish" string="Publish"
+            icon="tryton-go-next"/>
+        <button name="draft" string="Draft"
+            icon="tryton-go-previous"/>
+    </group>
 </form>

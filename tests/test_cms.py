@@ -3,7 +3,7 @@
 
     nereid_cms test_cms
 
-    :copyright: (c) 2010-2013 by Openlabs Technologies & Consulting (P) Ltd.
+    :copyright: (c) 2010-2014 by Openlabs Technologies & Consulting (P) Ltd.
     :license: GPLv3, see LICENSE for more details
 
 '''
@@ -137,6 +137,65 @@ class TestCMS(NereidTestCase):
         '''
         test_depends()
 
+    def test_0090_article_states(self):
+        """All articles in published state.
+
+        The articles attribute of the article category returns all the articles
+        irrespective of the status. The attribute published_articles must only
+        return the active articles.
+
+        This test creates four articles of which two are later archived, and
+        the test ensures that there are only two published articles
+        """
+        with Transaction().start(DB_NAME, USER, CONTEXT):
+
+            article_categ1, = self.ArticleCategory.create([{
+                'title': 'Test Categ',
+                'unique_name': 'test-categ1',
+            }])
+            article_categ2, = self.ArticleCategory.create([{
+                'title': 'Test Categ',
+                'unique_name': 'test-categ2',
+            }])
+
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article1',
+                'content': 'Test Content',
+                'sequence': 10,
+                'category': article_categ1,
+                'state': 'archived'
+            }])
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article2',
+                'content': 'Test Content',
+                'sequence': 20,
+                'category': article_categ1,
+                'state': 'published'
+            }])
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article3',
+                'content': 'Test Content',
+                'sequence': 30,
+                'category': article_categ2,
+                'state': 'archived'
+            }])
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article4',
+                'content': 'Test Content',
+                'sequence': 40,
+                'category': article_categ2,
+                'state': 'published'
+            }])
+
+            self.assertEqual(len(article_categ1.articles), 2)
+            self.assertEqual(len(article_categ2.articles), 2)
+            self.assertEqual(len(article_categ1.published_articles), 1)
+            self.assertEqual(len(article_categ2.published_articles), 1)
+
     def test_0010_article_category(self):
         "Successful rendering of an article_category page"
         with Transaction().start(DB_NAME, USER, CONTEXT):
@@ -152,6 +211,13 @@ class TestCMS(NereidTestCase):
         with Transaction().start(DB_NAME, USER, CONTEXT):
             self.setup_defaults()
             app = self.get_app()
+
+            # Publish the article first
+            article, = self.Article.search([
+                ('uri', '=', 'test-article')
+            ])
+            self.Article.publish([article])
+
             with app.test_client() as c:
                 response = c.get('/article/test-article')
                 self.assertEqual(response.status_code, 200)
