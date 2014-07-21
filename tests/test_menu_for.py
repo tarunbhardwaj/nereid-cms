@@ -78,7 +78,7 @@ class TestMenuFor(NereidTestCase):
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
             'guest_user': guest_user,
-            'currencies': [('set', [usd.id])],
+            'currencies': [('add', [usd.id])],
         }])
 
     def setUp(self):

@@ -10,6 +10,7 @@
 import time
 from string import Template
 
+from nereid import context_processor
 from nereid import (
     render_template, current_app, cache, request, login_required, jsonify,
     redirect, flash, abort, route
@@ -67,11 +68,7 @@ class Menu(ModelSQL, ModelView):
     "Nereid CMS Menu"
     __name__ = 'nereid.cms.menu'
 
-    name = fields.Char(
-        'Name', required=True,
-        on_change=['name', 'unique_identifier'],
-        depends=['name', 'unique_identifier']
-    )
+    name = fields.Char('Name', required=True)
     unique_identifier = fields.Char(
         'Unique Identifier', required=True, select=True
     )
@@ -164,6 +161,7 @@ class Menu(ModelSQL, ModelView):
         return result
 
     @classmethod
+    @context_processor('menu_for')
     def menu_for(cls, identifier, ident_field_value, objectified=False):
         """
         Returns a dictionary of menu tree
@@ -214,22 +212,12 @@ class Menu(ModelSQL, ModelView):
             cache.set(cache_key, rv, 60 * 60)
         return rv
 
+    @fields.depends('name', 'unique_identifier')
     def on_change_name(self):
         res = {}
         if self.name and not self.unique_identifier:
             res['unique_identifier'] = slugify(self.name)
         return res
-
-    @classmethod
-    def context_processor(cls):
-        """This function will be called by nereid to update
-        the template context. Must return a dictionary that the context
-        will be updated with.
-
-        This function is registered with nereid.template.context_processor
-        in xml code
-        """
-        return {'menu_for': cls.menu_for}
 
 
 class MenuItem(ModelSQL, ModelView):
@@ -238,8 +226,7 @@ class MenuItem(ModelSQL, ModelView):
     _rec_name = 'unique_name'
 
     title = fields.Char(
-        'Title', required=True,
-        on_change=['title', 'unique_name'], select=True, translate=True
+        'Title', required=True, select=True, translate=True
     )
     unique_name = fields.Char('Unique Name', required=True, select=True)
     link = fields.Char('Link')
@@ -302,6 +289,7 @@ class MenuItem(ModelSQL, ModelView):
         super(MenuItem, cls).validate(menus)
         cls.check_recursion(menus)
 
+    @fields.depends('name', 'unique_name')
     def on_change_title(self):
         res = {}
         if self.title and not self.unique_name:
@@ -334,6 +322,7 @@ class BannerCategory(ModelSQL, ModelView):
     )
 
     @classmethod
+    @context_processor('get_banner_category')
     def get_banner_category(cls, uri, silent=True):
         """Returns the browse record of the article category given by uri
         """
@@ -344,17 +333,6 @@ class BannerCategory(ModelSQL, ModelView):
         if not category and not silent:
             raise RuntimeError("Banner category %s not found" % uri)
         return category[0] if category else None
-
-    @classmethod
-    def context_processor(cls):
-        """This function will be called by nereid to update
-        the template context. Must return a dictionary that the context
-        will be updated with.
-
-        This function is registered with nereid.template.context_processor
-        in xml code
-        """
-        return {'get_banner_category': cls.get_banner_category}
 
     def get_published_banners(self, name):
         """
@@ -531,8 +509,7 @@ class ArticleCategory(ModelSQL, ModelView):
     per_page = 10
 
     title = fields.Char(
-        'Title', size=100, translate=True,
-        required=True, on_change=['title', 'unique_name'], select=True
+        'Title', size=100, translate=True, required=True, select=True
     )
     unique_name = fields.Char(
         'Unique Name', required=True, select=True,
@@ -579,6 +556,7 @@ class ArticleCategory(ModelSQL, ModelView):
                 'The Unique Name of the Category must be unique.'),
         ]
 
+    @fields.depends('name', 'unique_title')
     def on_change_title(self):
         res = {}
         if self.title and not self.unique_name:
@@ -614,6 +592,7 @@ class ArticleCategory(ModelSQL, ModelView):
             category.template, category=category, articles=articles)
 
     @classmethod
+    @context_processor('get_article_category')
     def get_article_category(cls, uri, silent=True):
         """Returns the browse record of the article category given by uri
         """
@@ -621,17 +600,6 @@ class ArticleCategory(ModelSQL, ModelView):
         if not category and not silent:
             raise RuntimeError("Article category %s not found" % uri)
         return category[0] if category else None
-
-    @classmethod
-    def context_processor(cls):
-        """This function will be called by nereid to update
-        the template context. Must return a dictionary that the context
-        will be updated with.
-
-        This function is registered with nereid.template.context_processor
-        in xml code
-        """
-        return {'get_article_category': cls.get_article_category}
 
     @classmethod
     @route('/sitemaps/article-category-index.xml')
@@ -762,6 +730,7 @@ class Article(Workflow, ModelSQL, ModelView):
     def default_active():
         return True
 
+    @fields.depends('title', 'uri')
     def on_change_title(self):
         res = {}
         if self.title and not self.uri:

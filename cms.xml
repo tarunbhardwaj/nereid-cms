@@ -116,10 +116,6 @@
             parent="menu_cms_menuitems_tree"
             action="act_cms_menuitems_form_new" />
 
-        <record model="nereid.template.context_processor" id="ctx_processor_menu">
-            <field name="method">nereid.cms.menu.context_processor</field>
-        </record>
-
         <!-- Articles -->
         <menuitem id="menu_cms_articles" name="Articles" 
             parent="menu_nereid_cms" />
@@ -189,10 +185,6 @@
         <menuitem action="action_cms_articles" id="menu_cms_articles_articles"
             name="Articles" parent="menu_cms_articles" />
 
-        <record model="nereid.template.context_processor" id="ctx_processor_article_category">
-            <field name="method">nereid.cms.article.category.context_processor</field>
-        </record>
-
         <!-- Banners -->
         <menuitem id="menu_cms_banners" name="Banners" 
             parent="menu_nereid_cms" />
@@ -261,10 +253,6 @@
 
         <menuitem action="action_cms_banners" id="menu_cms_banners_banners"
             name="Banners" parent="menu_cms_banners" />
-
-        <record model="nereid.template.context_processor" id="ctx_processor_banner_category">
-            <field name="method">nereid.cms.banner.category.context_processor</field>
-        </record>
 
         <!-- Website -->
         <record model="ir.ui.view" id="cms_website_view_form">
