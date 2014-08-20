@@ -556,7 +556,7 @@ class ArticleCategory(ModelSQL, ModelView):
                 'The Unique Name of the Category must be unique.'),
         ]
 
-    @fields.depends('name', 'unique_title')
+    @fields.depends('title', 'unique_name')
     def on_change_title(self):
         res = {}
         if self.title and not self.unique_name:
