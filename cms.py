@@ -30,6 +30,7 @@ from trytond import backend
 __all__ = [
     'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
     'ArticleCategory', 'Article', 'ArticleAttribute', 'NereidStaticFile',
+    'ArticleCategoryRelation',
 ]
 __metaclass__ = PoolMeta
 
@@ -518,8 +519,8 @@ class ArticleCategory(ModelSQL, ModelView):
     active = fields.Boolean('Active', select=True)
     description = fields.Text('Description', translate=True)
     template = fields.Char('Template', required=True)
-    articles = fields.One2Many(
-        'nereid.cms.article', 'category', 'Articles',
+    articles = fields.Many2Many(
+        'nereid.cms.category-article', 'category', 'article', 'Article',
         context={'published': True}
     )
 
@@ -643,10 +644,6 @@ class Article(Workflow, ModelSQL, ModelView):
     content = fields.Text('Content', required=True, translate=True)
     template = fields.Char('Template', required=True)
     active = fields.Boolean('Active', select=True)
-    category = fields.Many2One(
-        'nereid.cms.article.category', 'Category',
-        required=True, select=True
-    )
     image = fields.Many2One('nereid.static.file', 'Image')
     employee = fields.Many2One('company.employee', 'Employee')
     author = fields.Many2One('nereid.user', 'Author')
@@ -660,7 +657,9 @@ class Article(Workflow, ModelSQL, ModelView):
     attributes = fields.One2Many(
         'nereid.cms.article.attribute', 'article', 'Attributes'
     )
-
+    category = fields.Many2Many(
+        'nereid.cms.category-article', 'article', 'category', 'Category',
+    )
     # Article can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
     state = fields.Selection([
@@ -908,3 +907,17 @@ class Website:
         return jsonify(items=[
             item.serialize() for item in files
         ])
+
+
+class ArticleCategoryRelation(ModelSQL):
+    """
+    Relationshiop between article and category
+    """
+    __name__ = 'nereid.cms.category-article'
+
+    category = fields.Many2One(
+        'nereid.cms.article.category', 'Category', select=True
+    )
+    article = fields.Many2One(
+        'nereid.cms.article', 'Article', select=True
+    )
