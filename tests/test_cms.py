@@ -122,7 +122,7 @@ class TestCMS(NereidTestCase):
             'uri': 'test-article',
             'content': 'Test Content',
             'sequence': 10,
-            'category': article_categ,
+            'category': [('add', [article_categ.id])],
         }])
 
     def test0005views(self):
@@ -163,7 +163,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article1',
                 'content': 'Test Content',
                 'sequence': 10,
-                'category': article_categ1,
+                'category': [('add', [article_categ1.id])],
                 'state': 'archived'
             }])
             self.Article.create([{
@@ -171,7 +171,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article2',
                 'content': 'Test Content',
                 'sequence': 20,
-                'category': article_categ1,
+                'category': [('add', [article_categ1.id])],
                 'state': 'published'
             }])
             self.Article.create([{
@@ -179,7 +179,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article3',
                 'content': 'Test Content',
                 'sequence': 30,
-                'category': article_categ2,
+                'category': [('add', [article_categ2.id])],
                 'state': 'archived'
             }])
             self.Article.create([{
@@ -187,7 +187,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article4',
                 'content': 'Test Content',
                 'sequence': 40,
-                'category': article_categ2,
+                'category': [('add', [article_categ2.id])],
                 'state': 'published'
             }])
 
@@ -260,7 +260,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'Test Article',
                 'content': 'Test Content',
                 'sequence': 10,
-                'category': article_category.id,
+                'category': [('add', [article_category.id])],
                 'attributes': [
                     ('create', [{
                         'name': 'google+',

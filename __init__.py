@@ -12,6 +12,7 @@ from trytond.pool import Pool
 from .cms import (
     CMSLink, Menu, MenuItem, BannerCategory, Banner, ArticleCategory,
     Article, ArticleAttribute, Website, NereidStaticFile,
+    ArticleCategoryRelation,
 )
 
 
@@ -30,5 +31,6 @@ def register():
         ArticleAttribute,
         NereidStaticFile,
         Website,
+        ArticleCategoryRelation,
         module='nereid_cms', type_='model'
     )
