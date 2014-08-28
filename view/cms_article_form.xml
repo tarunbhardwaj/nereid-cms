@@ -4,16 +4,12 @@
         <field name="title" />
         <label name="uri" />
         <field name="uri" />
-        <newline />
-        <label name="category" />
-        <field name="category" />
-        <label name="active" />
-        <field name="active" />
-        <newline />
         <label name="template" />
         <field name="template" />
         <label name="image"/>
         <field name="image"/>
+        <label name="active" />
+        <field name="active" />
     </group>
     <notebook colspan="6">                            
         <page string="Content" id="content">
@@ -33,6 +29,9 @@
         </page>
         <page string="Attributes" id="attributes">
             <field name="attributes"/>
+        </page>
+        <page string="Categories" id="article-categories">
+            <field name="category" />
         </page>
     </notebook>
     <field name="state" colspan="2"/>
