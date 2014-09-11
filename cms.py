@@ -507,8 +507,6 @@ class ArticleCategory(ModelSQL, ModelView):
     __name__ = 'nereid.cms.article.category'
     _rec_name = 'title'
 
-    per_page = 10
-
     title = fields.Char(
         'Title', size=100, translate=True, required=True, select=True
     )
@@ -535,6 +533,7 @@ class ArticleCategory(ModelSQL, ModelView):
             'nereid.cms.article', 'category', 'Published Articles'
         ), 'get_published_articles'
     )
+    articles_per_page = fields.Integer('Articles per Page', required=True)
 
     @staticmethod
     def default_sort_order():
@@ -564,6 +563,10 @@ class ArticleCategory(ModelSQL, ModelView):
             res['unique_name'] = slugify(self.title)
         return res
 
+    @staticmethod
+    def default_articles_per_page():
+        return 10
+
     @classmethod
     @route('/article-category/<uri>/')
     @route('/article-category/<uri>/<int:page>')
@@ -586,8 +589,8 @@ class ArticleCategory(ModelSQL, ModelView):
             order.append(('write_date', 'ASC'))
 
         articles = Pagination(
-            Article, [('category', '=', category.id)], page, cls.per_page,
-            order=order
+            Article, [('category', '=', category.id)], page,
+            category.articles_per_page, order=order
         )
         return render_template(
             category.template, category=category, articles=articles)
