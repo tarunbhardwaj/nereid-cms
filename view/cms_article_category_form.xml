@@ -9,6 +9,8 @@
     <field name="template" />
     <label name="banner" />
     <field name="banner" />
+    <label name="articles_per_page" />
+    <field name="articles_per_page" />
     <field name="articles" colspan="4" />
     <separator
         colspan="4"
