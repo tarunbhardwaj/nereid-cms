@@ -276,18 +276,6 @@ class TestCMS(NereidTestCase):
             self.Article.delete([article1])
             self.assertEqual(self.ArticleAttribute.search([], count=True), 0)
 
-    def test_0060_create_menu_item(self):
-        '''
-        Test creating a new menu item
-        '''
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            menuitem, = self.MenuItem.create([{
-                'title': 'MenuItem',
-                'unique_name': 'MenuItem',
-                'sequence': 1
-            }])
-            self.assert_(menuitem)
-
 
 def suite():
     "CMS test suite"
