@@ -12,23 +12,23 @@ from string import Template
 
 from nereid import context_processor
 from nereid import (
-    render_template, current_app, cache, request, login_required, jsonify,
-    redirect, flash, abort, route
+    render_template, request, login_required, jsonify, redirect, flash,
+    abort, route
 )
-from nereid.helpers import slugify, url_for, key_from_list
+from nereid.helpers import slugify, url_for
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
 from werkzeug.utils import secure_filename
 from nereid.ctx import has_request_context
 
-from trytond.pyson import Eval, Not, Equal, Bool, In
+from trytond.pyson import Eval, Not, Equal, In
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 from trytond import backend
 
 __all__ = [
-    'CMSLink', 'Menu', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
+    'CMSLink', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
     'ArticleCategory', 'Article', 'ArticleAttribute', 'NereidStaticFile',
     'ArticleCategoryRelation',
 ]
@@ -65,201 +65,75 @@ class CMSLink(ModelSQL, ModelView):
         return res
 
 
-class Menu(ModelSQL, ModelView):
-    "Nereid CMS Menu"
-    __name__ = 'nereid.cms.menu'
-
-    name = fields.Char('Name', required=True)
-    unique_identifier = fields.Char(
-        'Unique Identifier', required=True, select=True
-    )
-    description = fields.Text('Description')
-    website = fields.Many2One('nereid.website', 'WebSite')
-    active = fields.Boolean('Active')
-
-    model = fields.Many2One('ir.model', 'Tryton Model', required=True)
-    children_field = fields.Many2One(
-        'ir.model.field', 'Children',
-        depends=['model'],
-        domain=[
-            ('model', '=', Eval('model')),
-            ('ttype', '=', 'one2many')
-        ], required=True
-    )
-    uri_field = fields.Many2One(
-        'ir.model.field', 'URI Field',
-        depends=['model'],
-        domain=[
-            ('model', '=', Eval('model')),
-            ('ttype', '=', 'char')
-        ], required=True
-    )
-    title_field = fields.Many2One(
-        'ir.model.field', 'Title Field',
-        depends=['model'],
-        domain=[
-            ('model', '=', Eval('model')),
-            ('ttype', '=', 'char')
-        ], required=True
-    )
-    identifier_field = fields.Many2One(
-        'ir.model.field', 'Identifier Field',
-        depends=['model'],
-        domain=[
-            ('model', '=', Eval('model')),
-            ('ttype', '=', 'char')
-        ], required=True
-    )
-
-    @staticmethod
-    def default_active():
-        """
-        By Default the Menu is active
-        """
-        return True
-
-    @classmethod
-    def __setup__(cls):
-        super(Menu, cls).__setup__()
-        cls._sql_constraints += [
-            ('unique_identifier', 'UNIQUE(unique_identifier, website)',
-                'The Unique Identifier of the Menu must be unique.'),
-        ]
-
-    def _menu_item_to_dict(self, menu_item):
-        """
-        :param menu_item: Active record of the menu item
-        """
-        if hasattr(menu_item, 'reference') and getattr(menu_item, 'reference'):
-            model, id = getattr(menu_item, 'reference').split(',')
-            if int(id):
-                reference, = Pool().get(model)(int(id))
-                uri = url_for(
-                    '%s.render' % reference.__name__, uri=reference.uri
-                )
-            else:
-                uri = getattr(menu_item, self.uri_field.name)
-        else:
-            uri = getattr(menu_item, self.uri_field.name)
-        return {
-            'name': getattr(menu_item, self.title_field.name),
-            'uri': uri,
-        }
-
-    def _generate_menu_tree(self, menu_item):
-        """
-        :param menu_item: Active record of the root menu_item
-        """
-        result = {'children': []}
-        result.update(self._menu_item_to_dict(menu_item))
-
-        # If children exist iteratively call _generate_..
-        children = getattr(menu_item, self.children_field.name)
-        if children:
-            for child in children:
-                result['children'].append(
-                    self._generate_menu_tree(child))
-        return result
-
-    @classmethod
-    @context_processor('menu_for')
-    def menu_for(cls, identifier, ident_field_value, objectified=False):
-        """
-        Returns a dictionary of menu tree
-
-        :param identifier: The unique identifier from which the menu
-                has to be chosen
-        :param ident_field_value: The value of the field that has to be
-                looked up on model with search on ident_field
-        :param objectified: The value returned is the active record of
-                the menu identified rather than a tree.
-        """
-        # First pick up the menu through identifier
-        try:
-            menu, = cls.search([
-                ('unique_identifier', '=', identifier),
-                ('website', '=', request.nereid_website.id),
-            ])
-
-        except ValueError:
-            current_app.logger.error(
-                "Menu %s could not be identified" % identifier)
-            abort(404)
-
-        # Get the data from the model
-        MenuItem = Pool().get(menu.model.model)
-        try:
-            root_menu_item, = MenuItem.search(
-                [(menu.identifier_field.name, '=', ident_field_value)],
-                limit=1)
-        except ValueError:
-            current_app.logger.error(
-                "Menu %s could not be identified" % ident_field_value)
-            abort(500)
-
-        if objectified:
-            return root_menu_item
-
-        cache_key = key_from_list([
-            Transaction().cursor.dbname,
-            Transaction().user,
-            Transaction().language,
-            identifier, ident_field_value,
-            'nereid.cms.menu.menu_for',
-        ])
-        rv = cache.get(cache_key)
-        if rv is None:
-            rv = menu._generate_menu_tree(root_menu_item)
-            cache.set(cache_key, rv, 60 * 60)
-        return rv
-
-    @fields.depends('name', 'unique_identifier')
-    def on_change_name(self):
-        res = {}
-        if self.name and not self.unique_identifier:
-            res['unique_identifier'] = slugify(self.name)
-        return res
-
-
 class MenuItem(ModelSQL, ModelView):
     "Nereid CMS Menuitem"
     __name__ = 'nereid.cms.menuitem'
-    _rec_name = 'unique_name'
+    _rec_name = 'title'
 
+    type_ = fields.Selection([
+        ('view', 'View'),
+        ('static', 'Static'),
+        ('record', 'Record'),
+    ], 'Type', required=True, select=True)
+    active = fields.Boolean('Active', select=True)
     title = fields.Char(
-        'Title', required=True, select=True, translate=True
-    )
-    unique_name = fields.Char('Unique Name', required=True, select=True)
-    link = fields.Char('Link')
-    use_url_builder = fields.Boolean('Use URL Builder')
-    url_for_build = fields.Many2One(
-        'nereid.url_rule', 'Rule',
-        depends=['use_url_builder'],
+        'Title', required=True, select=True, translate=True, depends=['type_'],
         states={
-            'required': Equal(Bool(Eval('use_url_builder')), True),
-            'invisible': Not(Equal(Bool(Eval('use_url_builder')), True)),
+            'required': Eval('type_') == 'static',
         }
     )
-    values_to_build = fields.Char(
-        'Values', depends=['use_url_builder'],
-        states={
-            'required': Equal(Bool(Eval('use_url_builder')), True),
-            'invisible': Not(Equal(Bool(Eval('use_url_builder')), True)),
-        }
+    link = fields.Char(
+        'Link', states={
+            'required': Eval('type_') == 'static',
+            'invisible': Eval('type_') != 'static',
+        }, depends=['type_']
     )
-    full_url = fields.Function(fields.Char('Full URL'), 'get_full_url')
-    parent = fields.Many2One('nereid.cms.menuitem', 'Parent Menuitem',)
+    target = fields.Selection([
+        ('_self', 'Self'),
+        ('_blank', 'Blank'),
+    ], 'Target', required=True)
+
+    parent = fields.Many2One(
+        'nereid.cms.menuitem', 'Parent Menuitem', states={
+            'required': Eval('type_') != 'view',
+        }, depends=['type_'], select=True
+    )
     child = fields.One2Many(
         'nereid.cms.menuitem', 'parent', string='Child Menu Items'
     )
-    active = fields.Boolean('Active')
+
     sequence = fields.Integer('Sequence', required=True, select=True)
+    record = fields.Reference(
+        'Record', selection='links_get', states={
+            'required': Eval('type_') == 'record',
+            'invisible': Eval('type_') != 'record',
+        }, depends=['type_'],
+    )
 
-    reference = fields.Reference('Reference', selection='links_get')
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+        sql_table = cls.__table__()
 
-    def get_full_url(self, name):
-        # TODO
-        return ''
+        super(MenuItem, cls).__register__(module_name)
+
+        table = TableHandler(cursor, cls, module_name)
+        if table.column_exist('reference'):  # pragma: no cover
+            table.not_null_action('unique_name', 'remove')
+
+            # Delete the newly created record column
+            table.drop_column('record')
+
+            # Rename the reference column as record
+            table.column_rename('reference', 'record', True)
+
+            # The value of type depends on existence of record
+            cursor.execute(*sql_table.update(
+                columns=[sql_table.type_],
+                values=['record'],
+                where=(sql_table.record != None)  # noqa
+            ))
 
     @staticmethod
     def links_get():
@@ -269,18 +143,26 @@ class MenuItem(ModelSQL, ModelView):
         return links
 
     @staticmethod
-    def default_active():
-        return True
+    def default_type_():
+        return 'static'
 
     @staticmethod
-    def default_values_to_build():
-        return '{ }'
+    def default_target():
+        return '_self'
+
+    @staticmethod
+    def default_sequence():
+        return 10
+
+    @staticmethod
+    def default_active():
+        return True
 
     @classmethod
     def __setup__(cls):
         super(MenuItem, cls).__setup__()
         cls._error_messages.update({
-            'wrong_recursion':
+            'recursion_error':
             'Error ! You can not create recursive menuitems.',
         })
         cls._order.insert(0, ('sequence', 'ASC'))
@@ -290,13 +172,6 @@ class MenuItem(ModelSQL, ModelView):
         super(MenuItem, cls).validate(menus)
         cls.check_recursion(menus)
 
-    @fields.depends('name', 'unique_name')
-    def on_change_title(self):
-        res = {}
-        if self.title and not self.unique_name:
-            res['unique_name'] = slugify(self.title)
-        return res
-
     def get_rec_name(self, name):
         def _name(menuitem):
             if menuitem.parent:
@@ -304,6 +179,63 @@ class MenuItem(ModelSQL, ModelView):
             else:
                 return menuitem.title
         return _name(self)
+
+    def get_menu_item(self, max_depth):
+        """
+        Return huge dictionary with serialized menu item
+
+        {
+            title: <display name>,
+            target: <href target>,
+            link: <url>,  # if type_ is `static`
+            children: [   # direct children or record children
+                <menu_item children>,
+                ...
+            ],
+            record: <instance of record>  # if type_ is `record`
+        }
+        """
+        res = {
+            'title': self.title,
+            'target': self.target,
+            'type_': self.type_,
+        }
+        if self.type_ == 'static':
+            res['link'] = self.link
+
+        if self.type_ == 'record':
+            res['record'] = self.record
+            res['link'] = self.record.get_absolute_url()
+
+        if max_depth:
+            res['children'] = self.get_children(max_depth=max_depth - 1)
+
+        if self.type_ == 'record' and not res.get('children') and max_depth:
+            if hasattr(self.record, 'get_children'):
+                res['children'] = self.record.get_children(
+                    max_depth=max_depth - 1
+                )
+        return res
+
+    def get_children(self, max_depth):
+        """
+        Return serialized menu_item for current menu_item children
+        """
+        children = self.search([
+            ('parent', '=', self.id),
+            ('active', '=', True)
+        ])
+        return [
+            child.get_menu_item(max_depth=max_depth - 1) for child in children
+        ]
+
+    def get_absolute_url(self, *args, **kwargs):
+        """
+        Return url for menu item
+        """
+        if self.type_ == 'record':
+            return self.record.get_absolute_url(*args, **kwargs)
+        return self.link
 
 
 class BannerCategory(ModelSQL, ModelView):
@@ -636,6 +568,21 @@ class ArticleCategory(ModelSQL, ModelView):
         ])
         return map(int, articles)
 
+    def get_children(self, max_depth):
+        """
+        Return serialized menu_item for current menu_item children
+        """
+        NereidArticle = Pool().get('nereid.cms.article')
+
+        articles = NereidArticle.search([
+            ('state', '=', 'published'),
+            ('category', '=', self.id)
+        ])
+        return [
+            article.get_menu_item(max_depth=max_depth - 1)
+            for article in articles
+        ]
+
 
 class Article(Workflow, ModelSQL, ModelView):
     "CMS Articles"
@@ -815,6 +762,22 @@ class Article(Workflow, ModelSQL, ModelView):
         if 'published' in Transaction().context:
             return 'published'
         return 'draft'
+
+    def get_menu_item(self, max_depth):
+        """
+        Return huge dictionary with serialized article category for menu item
+
+        {
+            title: <display name>,
+            link: <url>,
+            record: <instance of record>  # if type_ is `record`
+        }
+        """
+        return {
+            'record': self,
+            'title': self.title,
+            'link': self.get_absolute_url(),
+        }
 
 
 class ArticleAttribute(ModelSQL, ModelView):
