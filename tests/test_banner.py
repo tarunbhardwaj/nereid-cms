@@ -102,7 +102,6 @@ class TestBanner(NereidTestCase):
             'company': company,
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
-            'guest_user': guest_user,
             'currencies': [('add', [usd.id])],
         }])[0]
 
@@ -337,7 +336,6 @@ class TestGetHtml(NereidTestCase):
             'company': company,
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
-            'guest_user': guest_user,
             'currencies': [('add', [usd.id])],
         }])[0]
 
