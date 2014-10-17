@@ -473,6 +473,12 @@ class ArticleCategory(ModelSQL, ModelView):
                 'The Unique Name of the Category must be unique.'),
         ]
 
+    def on_change_title(self):
+        res = {}
+        if self.title and not self.unique_name:
+            res['unique_name'] = slugify(self.title)
+        return res
+
     @classmethod
     @route('/article-category/<uri>/')
     @route('/article-category/<uri>/<int:page>')
@@ -574,7 +580,10 @@ class Article(Workflow, ModelSQL, ModelView):
     _rec_name = 'uri'
 
     uri = fields.Char('URI', required=True, select=True, translate=True)
-    title = fields.Char('Title', required=True, select=True, translate=True)
+    title = fields.Char(
+        'Title', required=True, select=True, translate=True,
+        on_change=['title', 'uri']
+    )
     content = fields.Text('Content', required=True, translate=True)
     template = fields.Char('Template', required=True)
     active = fields.Boolean('Active', select=True)
