@@ -28,44 +28,51 @@ from trytond.pool import Pool, PoolMeta
 from trytond import backend
 
 __all__ = [
-    'CMSLink', 'MenuItem', 'BannerCategory', 'Banner', 'Website',
+    'MenuItem', 'BannerCategory', 'Banner', 'Website',
     'ArticleCategory', 'Article', 'ArticleAttribute', 'NereidStaticFile',
     'ArticleCategoryRelation',
 ]
 __metaclass__ = PoolMeta
 
 
-class CMSLink(ModelSQL, ModelView):
-    """
-    CMS link
+class CMSMenuItemMixin(object):
+    "Basic Mixin for cms menu item"
 
-    (c) 2010 Tryton Project
-    """
-    __name__ = 'nereid.cms.link'
+    def get_absolute_url(self, *args, **kwargs):
+        """
+        Return url for menu item
+        """
+        raise NotImplementedError(
+            "Method 'get_absolute_url' is not implemented in %s" % self.__name__
+        )
 
-    name = fields.Char('Name', required=True, translate=True, select=True)
-    model = fields.Selection('models_get', 'Model', required=True, select=True)
-    priority = fields.Integer('Priority')
+    def get_children(self, max_depth):
+        """
+        Return serialized menu_item for current menu_item children
+        """
+        return []
 
-    @classmethod
-    def __setup__(cls):
-        super(CMSLink, cls).__setup__()
-        cls._order.insert(0, ('priority', 'ASC'))
+    def get_menu_item(self, max_depth):
+        """
+        Return huge dictionary with serialized menu item
 
-    @staticmethod
-    def default_priority():
-        return 5
+        {
+            title: <display name>,
+            target: <href target>,
+            link: <url>,  # if type_ is `static`
+            children: [   # direct children or record children
+                <menu_item children>,
+                ...
+            ],
+            record: <instance of record>  # if type_ is `record`
+        }
+        """
+        raise NotImplementedError(
+            "Method 'get_menu_item' is not implemented in %s" % self.__name__
+        )
 
-    @staticmethod
-    def models_get():
-        Model = Pool().get('ir.model')
-        res = []
-        for model in Model.search([]):
-            res.append((model.model, model.name))
-        return res
 
-
-class MenuItem(ModelSQL, ModelView):
+class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
     "Nereid CMS Menuitem"
     __name__ = 'nereid.cms.menuitem'
     _rec_name = 'title'
@@ -104,7 +111,7 @@ class MenuItem(ModelSQL, ModelView):
 
     sequence = fields.Integer('Sequence', required=True, select=True)
     record = fields.Reference(
-        'Record', selection='links_get', states={
+        'Record', selection='allowed_models', states={
             'required': Eval('type_') == 'record',
             'invisible': Eval('type_') != 'record',
         }, depends=['type_'],
@@ -135,12 +142,13 @@ class MenuItem(ModelSQL, ModelView):
                 where=(sql_table.record != None)  # noqa
             ))
 
-    @staticmethod
-    def links_get():
-        CMSLink = Pool().get('nereid.cms.link')
-        links = [(x.model, x.name) for x in CMSLink.search([])]
-        links.append([None, ''])
-        return links
+    @classmethod
+    def allowed_models(cls):
+        return [
+            (None, ''),
+            ('nereid.cms.article.category', 'CMS Article Category'),
+            ('nereid.cms.article', 'CMS Article'),
+        ]
 
     @staticmethod
     def default_type_():
@@ -211,10 +219,9 @@ class MenuItem(ModelSQL, ModelView):
             res['children'] = self.get_children(max_depth=max_depth - 1)
 
         if self.type_ == 'record' and not res.get('children') and max_depth:
-            if hasattr(self.record, 'get_children'):
-                res['children'] = self.record.get_children(
-                    max_depth=max_depth - 1
-                )
+            res['children'] = self.record.get_children(
+                max_depth=max_depth - 1
+            )
         return res
 
     def get_children(self, max_depth):
@@ -352,7 +359,7 @@ class Banner(Workflow, ModelSQL, ModelView):
             ('published', 'Published'),
             ('archived', 'Archived')
     ], 'State', required=True, select=True, readonly=True)
-    reference = fields.Reference('Reference', selection='links_get')
+    reference = fields.Reference('Reference', selection='allowed_models')
 
     @classmethod
     def __setup__(cls):
@@ -418,10 +425,11 @@ class Banner(Workflow, ModelSQL, ModelView):
         elif banner['type'] == 'custom_code':
             return banner['custom_code']
 
-    @staticmethod
-    def links_get():
-        CMSLink = Pool().get('nereid.cms.link')
-        return [('', '')] + [(x.model, x.name) for x in CMSLink.search([])]
+    @classmethod
+    def allowed_models(cls):
+        MenuItem = Pool().get('nereid.cms.menuitem')
+
+        return MenuItem.allowed_models()
 
     @staticmethod
     def default_type():
@@ -434,7 +442,7 @@ class Banner(Workflow, ModelSQL, ModelView):
         return 'draft'
 
 
-class ArticleCategory(ModelSQL, ModelView):
+class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
     "Article Categories"
     __name__ = 'nereid.cms.article.category'
     _rec_name = 'title'
@@ -584,7 +592,7 @@ class ArticleCategory(ModelSQL, ModelView):
         ]
 
 
-class Article(Workflow, ModelSQL, ModelView):
+class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
     "CMS Articles"
     __name__ = 'nereid.cms.article'
     _rec_name = 'uri'
@@ -602,7 +610,7 @@ class Article(Workflow, ModelSQL, ModelView):
         fields.Char('Publish Date'), 'get_publish_date'
     )
     sequence = fields.Integer('Sequence', required=True, select=True)
-    reference = fields.Reference('Reference', selection='links_get')
+    reference = fields.Reference('Reference', selection='allowed_models')
     description = fields.Text('Short Description')
     attributes = fields.One2Many(
         'nereid.cms.article.attribute', 'article', 'Attributes'
@@ -670,10 +678,11 @@ class Article(Workflow, ModelSQL, ModelView):
     def draft(cls, articles):
         pass
 
-    @staticmethod
-    def links_get():
-        CMSLink = Pool().get('nereid.cms.link')
-        return [('', '')] + [(x.model, x.name) for x in CMSLink.search([])]
+    @classmethod
+    def allowed_models(cls):
+        MenuItem = Pool().get('nereid.cms.menuitem')
+
+        return MenuItem.allowed_models()
 
     @staticmethod
     def default_active():

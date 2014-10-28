@@ -36,7 +36,6 @@ class TestCMS(NereidTestCase):
         self.Party = POOL.get('party.party')
         self.Locale = POOL.get('nereid.website.locale')
         self.MenuItem = POOL.get('nereid.cms.menuitem')
-        self.Link = POOL.get('nereid.cms.link')
 
         self.templates = {
             'home.jinja':
