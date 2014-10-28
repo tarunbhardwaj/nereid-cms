@@ -27,7 +27,6 @@ class TestMenuItem(NereidTestCase):
     def setUp(self):
         trytond.tests.test_tryton.install_module('nereid_cms')
 
-        self.CMSLink = POOL.get('nereid.cms.link')
         self.Article = POOL.get('nereid.cms.article')
         self.ArticleCategory = POOL.get('nereid.cms.article.category')
         self.MenuItem = POOL.get('nereid.cms.menuitem')
@@ -102,14 +101,6 @@ class TestMenuItem(NereidTestCase):
         Test creation of menuitem
         """
         with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.CMSLink.create([{
-                'name': 'Article',
-                'model': 'nereid.cms.article'
-            }, {
-                'name': 'Article Category',
-                'model': 'nereid.cms.article.category'
-            }])
-
             category, = self.ArticleCategory.create([{
                 'title': 'blog',
                 'unique_name': 'blog',
@@ -121,7 +112,7 @@ class TestMenuItem(NereidTestCase):
                 'content': 'Test content',
                 'sequence': 10,
                 'state': 'published',
-                'category': category,
+                'category': [('add', [category.id])],
             }])
             main_view, = self.MenuItem.create([{
                 'type_': 'view',

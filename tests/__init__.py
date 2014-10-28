@@ -11,6 +11,7 @@ import unittest
 
 from .test_banner import TestBanner, TestGetHtml
 from .test_cms import TestCMS
+from .test_menuitem import TestMenuItem
 
 
 def suite():
@@ -19,5 +20,6 @@ def suite():
         unittest.TestLoader().loadTestsFromTestCase(TestBanner),
         unittest.TestLoader().loadTestsFromTestCase(TestGetHtml),
         unittest.TestLoader().loadTestsFromTestCase(TestCMS),
+        unittest.TestLoader().loadTestsFromTestCase(TestMenuItem),
     ])
     return test_suite

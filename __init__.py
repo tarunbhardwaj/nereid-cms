@@ -10,7 +10,7 @@
 
 from trytond.pool import Pool
 from .cms import (
-    CMSLink, MenuItem, BannerCategory, Banner, ArticleCategory,
+    MenuItem, BannerCategory, Banner, ArticleCategory,
     Article, ArticleAttribute, Website, NereidStaticFile,
     ArticleCategoryRelation,
 )
@@ -21,7 +21,6 @@ def register():
     Register classes
     """
     Pool.register(
-        CMSLink,
         MenuItem,
         BannerCategory,
         Banner,
