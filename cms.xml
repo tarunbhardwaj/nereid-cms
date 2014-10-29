@@ -9,37 +9,8 @@
         <menuitem name="CMS" sequence="20" id="menu_nereid_cms"
             parent="nereid.menu_nereid" />
 
-        <!-- Menus -->
-        <record model="ir.ui.view" id="cms_menus_view_form">
-            <field name="model">nereid.cms.menu</field>
-            <field name="type">form</field>
-            <field name="name">cms_menu_form</field>
-        </record>
-        <record model="ir.ui.view" id="cms_menus_view_tree">
-              <field name="model">nereid.cms.menu</field>
-              <field name="type">tree</field>
-              <field name="name">cms_menu_tree</field>
-        </record>
-        <record model="ir.action.act_window" id="act_cms_menus_form">
-            <field name="name">CMS Menus</field>
-            <field name="res_model">nereid.cms.menu</field>
-        </record>
-        <record model="ir.action.act_window.view" id="act_cms_menus_form_view1">
-            <field name="sequence" eval="10" />
-            <field name="view" ref="cms_menus_view_tree" />
-            <field name="act_window" ref="act_cms_menus_form" />
-        </record>
-        <record model="ir.action.act_window.view" id="act_cms_menus_form_view2">
-            <field name="sequence" eval="20" />
-            <field name="view" ref="cms_menus_view_form" />
-            <field name="act_window" ref="act_cms_menus_form" />
-        </record>
         <menuitem name="Menus" sequence="20" id="menu_nereid_cms_menus"
             parent="menu_nereid_cms" />
-        <menuitem name="Menus" sequence="20"
-            id="menu_nereid_cms_menus_all" 
-            parent="menu_nereid_cms_menus"
-            action="act_cms_menus_form" />
 
         <!-- Menuitems -->
         <record model="ir.ui.view" id="cms_menuitems_view_form">
@@ -63,7 +34,7 @@
         <record model="ir.action.act_window" id="act_cms_menuitems_tree">
             <field name="name">CMS Menuitems</field>
             <field name="res_model">nereid.cms.menuitem</field>
-            <field name="domain">[('parent', '=', False)]</field>
+            <field name="domain">[('parent', '=', None)]</field>
         </record>
         <record model="ir.action.act_window.view" id="act_cms_menuitems_tree_view1">
             <field name="sequence" eval="10"/>
@@ -262,48 +233,7 @@
             <field name="name">cms_website_form</field>
         </record>
 
-        <!-- CMS link -->
-        <menuitem id="menu_cms_configuration" name="Configuration" 
-            parent="menu_nereid_cms" />
-
-        <record model="ir.ui.view" id="cms_link_view_form">
-            <field name="model">nereid.cms.link</field>
-            <field name="type">form</field>
-            <field name="name">cms_link_form</field>
-        </record>
-        <record model="ir.ui.view" id="cms_link_view_tree">
-            <field name="model">nereid.cms.link</field>
-            <field name="type">tree</field>
-            <field name="name">cms_link_tree</field>
-        </record>
-        <record model="ir.action.act_window" id="act_cms_link_form">
-            <field name="name">CMS Links</field>
-            <field name="res_model">nereid.cms.link</field>
-        </record>
-        <record model="ir.action.act_window.view"
-            id="act_cms_link_form_view1">
-            <field name="sequence" eval="10"/>
-            <field name="view" ref="cms_link_view_tree"/>
-            <field name="act_window" ref="act_cms_link_form"/>
-        </record>
-        <record model="ir.action.act_window.view"
-            id="act_cms_link_form_view2">
-            <field name="sequence" eval="20"/>
-            <field name="view" ref="cms_link_view_form"/>
-            <field name="act_window" ref="act_cms_link_form"/>
-        </record>
-        <menuitem parent="menu_cms_configuration" action="act_cms_link_form" 
-            id="menu_cms_link_form" />
-
         <!-- Model Access -->
-        <record model="ir.model.access" id="access_menus_nereid_admin">
-            <field name="model" search="[('model', '=', 'nereid.cms.menu')]"/>
-            <field name="group" ref="nereid.group_nereid_admin"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_delete" eval="True"/>
-        </record>
         <record model="ir.model.access" id="access_menuitems_nereid_admin">
             <field name="model" 
                 search="[('model', '=', 'nereid.cms.menuitem')]"/>

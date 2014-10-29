@@ -4,14 +4,14 @@
 
     Collect all tests here
 
-    :copyright: © 2013 by Openlabs Technologies & Consulting (P) Limited
+    :copyright: (c) 2014 by Openlabs Technologies & Consulting (P) Limited
     :license: BSD, see LICENSE for more details.
 """
 import unittest
 
 from .test_banner import TestBanner, TestGetHtml
 from .test_cms import TestCMS
-from .test_menu_for import TestMenuFor
+from .test_menuitem import TestMenuItem
 
 
 def suite():
@@ -20,6 +20,6 @@ def suite():
         unittest.TestLoader().loadTestsFromTestCase(TestBanner),
         unittest.TestLoader().loadTestsFromTestCase(TestGetHtml),
         unittest.TestLoader().loadTestsFromTestCase(TestCMS),
-        unittest.TestLoader().loadTestsFromTestCase(TestMenuFor),
+        unittest.TestLoader().loadTestsFromTestCase(TestMenuItem),
     ])
     return test_suite

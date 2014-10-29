@@ -36,7 +36,6 @@ class TestCMS(NereidTestCase):
         self.Party = POOL.get('party.party')
         self.Locale = POOL.get('nereid.website.locale')
         self.MenuItem = POOL.get('nereid.cms.menuitem')
-        self.Link = POOL.get('nereid.cms.link')
 
         self.templates = {
             'home.jinja':
@@ -107,7 +106,6 @@ class TestCMS(NereidTestCase):
             'company': company.id,
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
-            'guest_user': guest_user,
             'currencies': [('add', [usd.id])],
         }])
 
@@ -275,18 +273,6 @@ class TestCMS(NereidTestCase):
             # are also deleted.
             self.Article.delete([article1])
             self.assertEqual(self.ArticleAttribute.search([], count=True), 0)
-
-    def test_0060_create_menu_item(self):
-        '''
-        Test creating a new menu item
-        '''
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            menuitem, = self.MenuItem.create([{
-                'title': 'MenuItem',
-                'unique_name': 'MenuItem',
-                'sequence': 1
-            }])
-            self.assert_(menuitem)
 
 
 def suite():
