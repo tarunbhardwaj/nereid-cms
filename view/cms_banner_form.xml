@@ -6,6 +6,8 @@
         <field name="type" />
         <label name="category" />
         <field name="category" />
+        <label name="sequence" />
+        <field name="sequence" />
     </group>
     <notebook>
         <page id="description" string="Description">
