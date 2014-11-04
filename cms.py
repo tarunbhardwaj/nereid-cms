@@ -108,6 +108,31 @@ class MenuItem(ModelSQL, ModelView):
         }, depends=['type_'],
     )
 
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+        sql_table = cls.__table__()
+
+        super(MenuItem, cls).__register__(module_name)
+
+        table = TableHandler(cursor, cls, module_name)
+        if table.column_exist('reference'):  # pragma: no cover
+            table.not_null_action('unique_name', 'remove')
+
+            # Delete the newly created record column
+            table.drop_column('record')
+
+            # Rename the reference column as record
+            table.column_rename('reference', 'record', True)
+
+            # The value of type depends on existence of record
+            cursor.execute(*sql_table.update(
+                columns=[sql_table.type_],
+                values=['record'],
+                where=(sql_table.record != None)  # noqa
+            ))
+
     @staticmethod
     def links_get():
         CMSLink = Pool().get('nereid.cms.link')
