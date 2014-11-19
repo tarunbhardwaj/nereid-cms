@@ -1,6 +1,9 @@
 # Install packages from requirements.txt
 -r requirements.txt
 
+markdown
+docutils
+
 trytond_product>=3.2,<3.3
 
 flake8

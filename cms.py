@@ -27,6 +27,16 @@ from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 from trytond import backend
 
+try:
+    from docutils.core import publish_parts
+except ImportError:
+    publish_parts = None
+
+try:
+    from markdown import markdown
+except ImportError:
+    markdown = None
+
 __all__ = [
     'MenuItem', 'BannerCategory', 'Banner', 'Website',
     'ArticleCategory', 'Article', 'ArticleAttribute', 'NereidStaticFile',
@@ -618,6 +628,10 @@ class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
     category = fields.Many2Many(
         'nereid.cms.category-article', 'article', 'category', 'Category',
     )
+    content_type = fields.Selection(
+        'content_type_selection', 'Content Type',
+        required=True
+    )
     # Article can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
     state = fields.Selection([
@@ -659,6 +673,50 @@ class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
                 'invisible': Eval('state') == 'draft',
             }
         })
+
+    @classmethod
+    def content_type_selection(cls):
+        """
+        Returns a selection for content_type.
+        """
+        default_types = [
+            ('html', 'HTML'),
+            ('plain', 'Plain Text')
+        ]
+
+        if markdown:
+            default_types.append(('markdown', 'Markdown'))
+        if publish_parts:
+            default_types.append(('rst', 'reStructured TeXT'))
+
+        return default_types
+
+    @classmethod
+    def default_content_type(cls):
+        """
+        Default content_type.
+        """
+        return 'plain'
+
+    def __html__(self):
+        """
+        Uses content_type field to generate html content.
+        Concept from Jinja2's Markup class.
+        """
+        if self.content_type == 'rst':
+            if publish_parts:
+                res = publish_parts(self.content, writer_name='html')
+                return res['html_body']
+            self.raise_user_error(
+                "`docutils` not installed, to render rst articles."
+            )
+        if self.content_type == 'markdown':
+            if markdown:
+                return markdown(self.content)
+            self.raise_user_error(
+                "`markdown` not installed, to render markdown article."
+            )
+        return self.content
 
     @classmethod
     @ModelView.button

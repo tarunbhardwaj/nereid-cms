@@ -13,7 +13,10 @@
     </group>
     <notebook colspan="6">                            
         <page string="Content" id="content">
-            <field name="content"/>
+            <label name="content_type" />
+            <field name="content_type" colspan="2" />
+            <newline/>
+            <field name="content" colspan="4" />
         </page>
         <page string="Parameters" id="parameters">
             <label name="sequence" />

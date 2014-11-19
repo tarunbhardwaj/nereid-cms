@@ -274,6 +274,68 @@ class TestCMS(NereidTestCase):
             self.Article.delete([article1])
             self.assertEqual(self.ArticleAttribute.search([], count=True), 0)
 
+    def test_0055_article_content(self):
+        """
+        Tests that the article has been rendered properly.
+        """
+        with Transaction().start(DB_NAME, USER, CONTEXT):
+            article_category, = self.ArticleCategory.create([{
+                'title': 'Test Categ',
+                'unique_name': 'test-categ',
+            }])
+
+            article1, = self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'Test Article',
+                'content': 'Test Content',
+                'content_type': 'plain',
+                'sequence': 10,
+                'category': [('add', [article_category.id])],
+                'attributes': [
+                    ('create', [{
+                        'name': 'google+',
+                        'value': 'abc',
+                    }])
+                ]
+            }])
+
+            # Plain content.
+            self.assertEqual(article1.__html__(), article1.content)
+
+            # HTML content.
+            article1.content = '<html><body><p>A paragraph.</p></body></html>'
+            article1.content_type = 'html'
+
+            self.assertEqual(article1.__html__(), article1.content)
+
+            # Markdown content.
+            article1.content = '**This is strong in markdown**'
+            article1.content_type = 'markdown'
+            article1.save()
+
+            self.assertIn(
+                '<strong>This is strong in markdown</strong>',
+                article1.__html__()
+            )
+
+            article1.content = '`A blockquote`'
+            article1.save()
+
+            self.assertIn(
+                '<p><code>A blockquote</code></p>',
+                article1.__html__()
+            )
+
+            # RST content.
+            article1.content = '*This is emphasis in rst*'
+            article1.content_type = 'rst'
+            article1.save()
+
+            self.assertIn(
+                '<em>This is emphasis in rst</em>',
+                article1.__html__()
+            )
+
 
 def suite():
     "CMS test suite"
