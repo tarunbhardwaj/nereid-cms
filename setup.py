@@ -136,6 +136,8 @@ requires.append(
     )
 )
 
+test_requirements = ['docutils', 'markdown']
+
 setup(
     name='trytond_nereid_cms',
     version=info.get('version', '0.0.1'),
@@ -166,6 +168,7 @@ setup(
     ],
     license='GPL-3',
     install_requires=requires,
+    tests_require=test_requirements,
     zip_safe=False,
     entry_points="""
     [trytond.modules]
