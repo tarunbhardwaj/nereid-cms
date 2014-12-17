@@ -1,0 +1,764 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "error:nereid.cms.article.category:"
+msgid "The Unique Name of the Category must be unique."
+msgstr "Der eindeutige Name einer Kategorie kann nur einmal vergeben werden."
+
+msgctxt "error:nereid.cms.menuitem:"
+msgid "Error ! You can not create recursive menuitems."
+msgstr "Menüelemente können nicht rekursiv angelegt werden"
+
+msgctxt "field:nereid.cms.article,active:"
+msgid "Active"
+msgstr "Aktiv"
+
+msgctxt "field:nereid.cms.article,attributes:"
+msgid "Attributes"
+msgstr "Attribute"
+
+msgctxt "field:nereid.cms.article,author:"
+msgid "Author"
+msgstr "Verfasser"
+
+msgctxt "field:nereid.cms.article,banner:"
+msgid "Banner"
+msgstr "Banner"
+
+msgctxt "field:nereid.cms.article,category:"
+msgid "Category"
+msgstr "Kategorie"
+
+msgctxt "field:nereid.cms.article,content:"
+msgid "Content"
+msgstr "Inhalt"
+
+msgctxt "field:nereid.cms.article,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.article,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.article,description:"
+msgid "Short Description"
+msgstr "Kurzbeschreibung"
+
+msgctxt "field:nereid.cms.article,employee:"
+msgid "Employee"
+msgstr "Mitarbeiter"
+
+msgctxt "field:nereid.cms.article,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.article,image:"
+msgid "Image"
+msgstr "Bild"
+
+msgctxt "field:nereid.cms.article,publish_date:"
+msgid "Publish Date"
+msgstr "Publikationsdatum"
+
+msgctxt "field:nereid.cms.article,published_on:"
+msgid "Published On"
+msgstr "Publiziert am"
+
+msgctxt "field:nereid.cms.article,rec_name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.article,reference:"
+msgid "Reference"
+msgstr "Verknüpfung"
+
+msgctxt "field:nereid.cms.article,sequence:"
+msgid "Sequence"
+msgstr "Reihenfolge"
+
+msgctxt "field:nereid.cms.article,state:"
+msgid "State"
+msgstr "Status"
+
+msgctxt "field:nereid.cms.article,template:"
+msgid "Template"
+msgstr "Vorlage"
+
+msgctxt "field:nereid.cms.article,title:"
+msgid "Title"
+msgstr "Überschrift"
+
+msgctxt "field:nereid.cms.article,uri:"
+msgid "URI"
+msgstr "URI"
+
+msgctxt "field:nereid.cms.article,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.article,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.cms.article.attribute,article:"
+msgid "Article"
+msgstr "Artikel"
+
+msgctxt "field:nereid.cms.article.attribute,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.article.attribute,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.article.attribute,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.article.attribute,name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.article.attribute,rec_name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.article.attribute,value:"
+msgid "Value"
+msgstr "Wert"
+
+msgctxt "field:nereid.cms.article.attribute,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.article.attribute,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.cms.article.category,active:"
+msgid "Active"
+msgstr "Aktiv"
+
+msgctxt "field:nereid.cms.article.category,articles:"
+msgid "Article"
+msgstr "Artikel"
+
+msgctxt "field:nereid.cms.article.category,articles_per_page:"
+msgid "Articles per Page"
+msgstr "Artikel pro Seite"
+
+msgctxt "field:nereid.cms.article.category,banner:"
+msgid "Banner"
+msgstr "Banner"
+
+msgctxt "field:nereid.cms.article.category,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.article.category,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.article.category,description:"
+msgid "Description"
+msgstr "Beschreibung"
+
+msgctxt "field:nereid.cms.article.category,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.article.category,published_articles:"
+msgid "Published Articles"
+msgstr "Publizierte Artikel"
+
+msgctxt "field:nereid.cms.article.category,rec_name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.article.category,sort_order:"
+msgid "Sort Order"
+msgstr "Sortierreihenfolge"
+
+msgctxt "field:nereid.cms.article.category,template:"
+msgid "Template"
+msgstr "Vorlage"
+
+msgctxt "field:nereid.cms.article.category,title:"
+msgid "Title"
+msgstr "Überschrift"
+
+msgctxt "field:nereid.cms.article.category,unique_name:"
+msgid "Unique Name"
+msgstr "Eindeutiger Name"
+
+msgctxt "field:nereid.cms.article.category,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.article.category,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.cms.banner,alternative_text:"
+msgid "Alternative Text"
+msgstr "Alternativer Text"
+
+msgctxt "field:nereid.cms.banner,category:"
+msgid "Category"
+msgstr "Kategorie"
+
+msgctxt "field:nereid.cms.banner,click_url:"
+msgid "Click URL"
+msgstr "Klick URL"
+
+msgctxt "field:nereid.cms.banner,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.banner,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.banner,custom_code:"
+msgid "Custom Code"
+msgstr "Spezifischer Code"
+
+msgctxt "field:nereid.cms.banner,description:"
+msgid "Description"
+msgstr "Beschreibung"
+
+msgctxt "field:nereid.cms.banner,file:"
+msgid "File"
+msgstr "Datei"
+
+msgctxt "field:nereid.cms.banner,height:"
+msgid "Height"
+msgstr "Höhe"
+
+msgctxt "field:nereid.cms.banner,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.banner,name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.banner,rec_name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.banner,reference:"
+msgid "Reference"
+msgstr "Verknüpfung"
+
+msgctxt "field:nereid.cms.banner,remote_image_url:"
+msgid "Remote Image URL"
+msgstr "Entfernte Bilddatei URL"
+
+msgctxt "field:nereid.cms.banner,sequence:"
+msgid "Sequence"
+msgstr "Reihenfolge"
+
+msgctxt "field:nereid.cms.banner,state:"
+msgid "State"
+msgstr "Status"
+
+msgctxt "field:nereid.cms.banner,type:"
+msgid "Type"
+msgstr "Typ"
+
+msgctxt "field:nereid.cms.banner,width:"
+msgid "Width"
+msgstr "Breite"
+
+msgctxt "field:nereid.cms.banner,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.banner,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.cms.banner.category,banners:"
+msgid "Banners"
+msgstr "Banner"
+
+msgctxt "field:nereid.cms.banner.category,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.banner.category,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.banner.category,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.banner.category,name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.banner.category,published_banners:"
+msgid "Published Banners"
+msgstr "Publizierte Banner"
+
+msgctxt "field:nereid.cms.banner.category,rec_name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.banner.category,website:"
+msgid "WebSite"
+msgstr "Website"
+
+msgctxt "field:nereid.cms.banner.category,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.banner.category,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.cms.category-article,article:"
+msgid "Article"
+msgstr "Artikel"
+
+msgctxt "field:nereid.cms.category-article,category:"
+msgid "Category"
+msgstr "Kategorie"
+
+msgctxt "field:nereid.cms.category-article,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.category-article,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.category-article,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.category-article,rec_name:"
+msgid "Name"
+msgstr "Name Staat"
+
+msgctxt "field:nereid.cms.category-article,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.category-article,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.cms.menuitem,active:"
+msgid "Active"
+msgstr "Aktiv"
+
+msgctxt "field:nereid.cms.menuitem,child:"
+msgid "Child Menu Items"
+msgstr "Untergeordnete Menüelemente"
+
+msgctxt "field:nereid.cms.menuitem,create_date:"
+msgid "Create Date"
+msgstr "Erstellungsdatum"
+
+msgctxt "field:nereid.cms.menuitem,create_uid:"
+msgid "Create User"
+msgstr "Erstellt durch"
+
+msgctxt "field:nereid.cms.menuitem,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:nereid.cms.menuitem,link:"
+msgid "Link"
+msgstr "Link"
+
+msgctxt "field:nereid.cms.menuitem,parent:"
+msgid "Parent Menuitem"
+msgstr "Übergeordnetes Menüelement"
+
+msgctxt "field:nereid.cms.menuitem,rec_name:"
+msgid "Name"
+msgstr "Name"
+
+msgctxt "field:nereid.cms.menuitem,record:"
+msgid "Record"
+msgstr "Datensatz"
+
+msgctxt "field:nereid.cms.menuitem,sequence:"
+msgid "Sequence"
+msgstr "Reihenfolge"
+
+msgctxt "field:nereid.cms.menuitem,target:"
+msgid "Target"
+msgstr "Ziel"
+
+msgctxt "field:nereid.cms.menuitem,title:"
+msgid "Title"
+msgstr "Überschrift"
+
+msgctxt "field:nereid.cms.menuitem,type_:"
+msgid "Type"
+msgstr "Typ"
+
+msgctxt "field:nereid.cms.menuitem,write_date:"
+msgid "Write Date"
+msgstr "Zuletzt geändert"
+
+msgctxt "field:nereid.cms.menuitem,write_uid:"
+msgid "Write User"
+msgstr "Letzte Änderung durch"
+
+msgctxt "field:nereid.website,cms_static_folder:"
+msgid "CMS Static Folder"
+msgstr "CMS Statisches Verzeichnis"
+
+msgctxt "help:nereid.cms.article.category,unique_name:"
+msgid "Unique Name is used as the uri."
+msgstr "Der eindeutige Name wird als URI verwendet."
+
+msgctxt "model:ir.action,name:act_cms_menuitems_form"
+msgid "CMS Menuitems"
+msgstr "CMS Menüelemente"
+
+msgctxt "model:ir.action,name:act_cms_menuitems_form_new"
+msgid "New Menuitem"
+msgstr "Neues Menüelement"
+
+msgctxt "model:ir.action,name:act_cms_menuitems_tree"
+msgid "CMS Menuitems"
+msgstr "CMS Menüelemente"
+
+msgctxt "model:ir.action,name:action_cms_article_category"
+msgid "CMS Article Categories"
+msgstr "CMS Artikelkategorien"
+
+msgctxt "model:ir.action,name:action_cms_articles"
+msgid "CMS Articles"
+msgstr "CMS Artikel"
+
+msgctxt "model:ir.action,name:action_cms_banner_category"
+msgid "CMS Banner Categories"
+msgstr "CMS Bannerkategorien"
+
+msgctxt "model:ir.action,name:action_cms_banners"
+msgid "CMS Banners"
+msgstr "CMS Banner"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_articles"
+msgid "Articles"
+msgstr "Artikel"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_articles_articles"
+msgid "Articles"
+msgstr "Artikel"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_articles_category"
+msgid "Article Categories"
+msgstr "Artikelkategorien"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_banner_category"
+msgid "Banner Categories"
+msgstr "Bannerkategorien"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_banners"
+msgid "Banners"
+msgstr "Banner"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_banners_banners"
+msgid "Banners"
+msgstr "Banner"
+
+msgctxt "model:ir.ui.menu,name:menu_cms_menuitems_tree"
+msgid "CMS Menuitems"
+msgstr "CMS Menüelemente"
+
+msgctxt "model:ir.ui.menu,name:menu_nereid_cms"
+msgid "CMS"
+msgstr "CMS"
+
+msgctxt "model:ir.ui.menu,name:menu_nereid_cms_menuitems"
+msgid "Menuitems"
+msgstr "Menüelemente"
+
+msgctxt "model:ir.ui.menu,name:menu_nereid_cms_menuitems_new"
+msgid "New Menuitem"
+msgstr "Neues Menüelement"
+
+msgctxt "model:ir.ui.menu,name:menu_nereid_cms_menus"
+msgid "Menus"
+msgstr "Menüs"
+
+msgctxt "model:nereid.cms.article,name:"
+msgid "CMS Articles"
+msgstr "CMS Artikel"
+
+msgctxt "model:nereid.cms.article.attribute,name:"
+msgid "Articles Attribute"
+msgstr "Artikelattribute"
+
+msgctxt "model:nereid.cms.article.category,name:"
+msgid "Article Categories"
+msgstr "Artikelkategorien"
+
+msgctxt "model:nereid.cms.banner,name:"
+msgid "Banner for CMS."
+msgstr "Banner für CMS"
+
+msgctxt "model:nereid.cms.banner.category,name:"
+msgid "Collection of related Banners"
+msgstr "Sammlung verbundener Banner"
+
+msgctxt "model:nereid.cms.category-article,name:"
+msgid "Relationshiop between article and category"
+msgstr "Nereid CMS Kategorie - Artikel"
+
+msgctxt "model:nereid.cms.menuitem,name:"
+msgid "Nereid CMS Menuitem"
+msgstr "Nereid CMS Menüelement"
+
+msgctxt "selection:nereid.cms.article,state:"
+msgid "Archived"
+msgstr "Archiviert"
+
+msgctxt "selection:nereid.cms.article,state:"
+msgid "Draft"
+msgstr "Entwurf"
+
+msgctxt "selection:nereid.cms.article,state:"
+msgid "Published"
+msgstr "Publiziert"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid ""
+msgstr ""
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Blogger"
+msgstr "Blogger"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Facebook"
+msgstr "Facebook"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Github"
+msgstr "Github"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Google+"
+msgstr "Google+"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Linked-in"
+msgstr "Linked-in"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Phone"
+msgstr "Telefon"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Tumblr"
+msgstr "Tumblr"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Twitter"
+msgstr "Twitter"
+
+msgctxt "selection:nereid.cms.article.attribute,name:"
+msgid "Website"
+msgstr "Website"
+
+msgctxt "selection:nereid.cms.article.category,sort_order:"
+msgid "Older First"
+msgstr "Älteste zuerst"
+
+msgctxt "selection:nereid.cms.article.category,sort_order:"
+msgid "Recent First"
+msgstr "Neueste zuerst"
+
+msgctxt "selection:nereid.cms.banner,state:"
+msgid "Archived"
+msgstr "Archiviert"
+
+msgctxt "selection:nereid.cms.banner,state:"
+msgid "Draft"
+msgstr "Entwurf"
+
+msgctxt "selection:nereid.cms.banner,state:"
+msgid "Published"
+msgstr "Publiziert"
+
+msgctxt "selection:nereid.cms.banner,type:"
+msgid "Custom Code"
+msgstr "Spezifischer Code"
+
+msgctxt "selection:nereid.cms.banner,type:"
+msgid "Image"
+msgstr "Bild"
+
+msgctxt "selection:nereid.cms.banner,type:"
+msgid "Remote Image"
+msgstr "Entfernte Bilddatei"
+
+msgctxt "selection:nereid.cms.menuitem,target:"
+msgid "Blank"
+msgstr "Blank (neuer Tab)"
+
+msgctxt "selection:nereid.cms.menuitem,target:"
+msgid "Self"
+msgstr "Self (im selben Tab)"
+
+msgctxt "selection:nereid.cms.menuitem,type_:"
+msgid "Record"
+msgstr "Datensatz"
+
+msgctxt "selection:nereid.cms.menuitem,type_:"
+msgid "Static"
+msgstr "Statisch"
+
+msgctxt "selection:nereid.cms.menuitem,type_:"
+msgid "View"
+msgstr "View"
+
+msgctxt "view:nereid.cms.article.category:"
+msgid "CMS Article Categories"
+msgstr "CMS Artikelkategorien"
+
+msgctxt "view:nereid.cms.article.category:"
+msgid "CMS Article Category"
+msgstr "CMS Artikelkategorie"
+
+msgctxt "view:nereid.cms.article.category:"
+msgid "Description"
+msgstr "Beschreibung"
+
+msgctxt "view:nereid.cms.article.category:"
+msgid "Published Articles"
+msgstr "Publizierte Artikel"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Archive"
+msgstr "Archivieren"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Attributes"
+msgstr "Attribute"
+
+msgctxt "view:nereid.cms.article:"
+msgid "CMS Article"
+msgstr "CMS Artikel"
+
+msgctxt "view:nereid.cms.article:"
+msgid "CMS Articles"
+msgstr "CMS Artikel"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Categories"
+msgstr "Parteikategorien"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Content"
+msgstr "Inhalt"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Draft"
+msgstr "Entwurf"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Parameters"
+msgstr "Parameter"
+
+msgctxt "view:nereid.cms.article:"
+msgid "Publish"
+msgstr "Publizieren"
+
+msgctxt "view:nereid.cms.banner.category:"
+msgid "Banners"
+msgstr "Banner"
+
+msgctxt "view:nereid.cms.banner.category:"
+msgid "CMS Banner Categories"
+msgstr "CMS Bannerkategorien"
+
+msgctxt "view:nereid.cms.banner.category:"
+msgid "CMS Banner Category"
+msgstr "CMS Bannerkategorie"
+
+msgctxt "view:nereid.cms.banner.category:"
+msgid "Published Banners"
+msgstr "Publizierte Banner"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Alternate text for an image, if the image cannot be displayed:"
+msgstr ""
+"Alternativer Text für ein Bild, falls das Bild nicht angezeigt werden kann"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Archive"
+msgstr "Archivieren"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "CMS Banner"
+msgstr "CMS Banner"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "CMS Banners"
+msgstr "CMS Banner"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Custom Code"
+msgstr "Spezifischer Code"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Description"
+msgstr "Beschreibung"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Dimension of the image"
+msgstr "Abmessungen des Bilds"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Image"
+msgstr "Bild"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Link to go to when the image is clicked:"
+msgstr "Link, der aufgerufen werden soll, wenn das Bild angeklickt wird."
+
+msgctxt "view:nereid.cms.banner:"
+msgid "Publish"
+msgstr "Publizieren"
+
+msgctxt "view:nereid.cms.banner:"
+msgid "The image to be displayed as a banner:"
+msgstr "Das Bild, das als Banner angezeigt werden soll."
+
+msgctxt "view:nereid.cms.banner:"
+msgid ""
+"Write the custom code below and the code would be placed in lieu of the "
+"banner"
+msgstr ""
+"Tragen Sie den spezifischen Code unten ein, dieser Code wird anstelle des "
+"Banners platziert."
+
+msgctxt "view:nereid.cms.menuitem:"
+msgid "CMS Menuitem"
+msgstr "CMS Menüelement"
+
+msgctxt "view:nereid.cms.menuitem:"
+msgid "CMS Menuitems"
+msgstr "CMS Menüelemente"
+
+msgctxt "view:nereid.cms.menuitem:"
+msgid "Children"
+msgstr "Untergeordnet (Menüelemente)"
+
+msgctxt "view:nereid.cms.menuitem:"
+msgid "Routing"
+msgstr "Routing"
