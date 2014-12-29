@@ -3,7 +3,7 @@
 
     nereid_cms test_menuitem
 
-    :copyright: (c) 2010-2014 by Openlabs Technologies & Consulting (P) Ltd.
+    :copyright: (c) 2010-2015 by Openlabs Technologies & Consulting (P) Ltd.
     :license: GPLv3, see LICENSE for more details
 
 '''
@@ -34,7 +34,6 @@ class TestMenuItem(NereidTestCase):
         self.Currency = POOL.get('currency.currency')
         self.Company = POOL.get('company.company')
         self.NereidUser = POOL.get('nereid.user')
-        self.UrlMap = POOL.get('nereid.url_map')
         self.Language = POOL.get('ir.lang')
         self.Website = POOL.get('nereid.website')
         self.Party = POOL.get('party.party')
@@ -86,10 +85,8 @@ class TestMenuItem(NereidTestCase):
             'currency': usd.id
         }])
         # Create website
-        url_map, = self.UrlMap.search([], limit=1)
         self.Website.create([{
             'name': 'localhost',
-            'url_map': url_map,
             'company': company.id,
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
