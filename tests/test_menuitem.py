@@ -112,7 +112,7 @@ class TestMenuItem(NereidTestCase):
                 'content': 'Test content',
                 'sequence': 10,
                 'state': 'published',
-                'category': [('add', [category.id])],
+                'categories': [('add', [category.id])],
             }])
             main_view, = self.MenuItem.create([{
                 'type_': 'view',

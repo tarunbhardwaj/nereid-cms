@@ -120,7 +120,7 @@ class TestCMS(NereidTestCase):
             'uri': 'test-article',
             'content': 'Test Content',
             'sequence': 10,
-            'category': [('add', [article_categ.id])],
+            'categories': [('add', [article_categ.id])],
         }])
 
     def test0005views(self):
@@ -161,7 +161,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article1',
                 'content': 'Test Content',
                 'sequence': 10,
-                'category': [('add', [article_categ1.id])],
+                'categories': [('add', [article_categ1.id])],
                 'state': 'archived'
             }])
             self.Article.create([{
@@ -169,7 +169,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article2',
                 'content': 'Test Content',
                 'sequence': 20,
-                'category': [('add', [article_categ1.id])],
+                'categories': [('add', [article_categ1.id])],
                 'state': 'published'
             }])
             self.Article.create([{
@@ -177,7 +177,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article3',
                 'content': 'Test Content',
                 'sequence': 30,
-                'category': [('add', [article_categ2.id])],
+                'categories': [('add', [article_categ2.id])],
                 'state': 'archived'
             }])
             self.Article.create([{
@@ -185,7 +185,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article4',
                 'content': 'Test Content',
                 'sequence': 40,
-                'category': [('add', [article_categ2.id])],
+                'categories': [('add', [article_categ2.id])],
                 'state': 'published'
             }])
 
@@ -258,7 +258,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'Test Article',
                 'content': 'Test Content',
                 'sequence': 10,
-                'category': [('add', [article_category.id])],
+                'categories': [('add', [article_category.id])],
                 'attributes': [
                     ('create', [{
                         'name': 'google+',
@@ -273,6 +273,68 @@ class TestCMS(NereidTestCase):
             # are also deleted.
             self.Article.delete([article1])
             self.assertEqual(self.ArticleAttribute.search([], count=True), 0)
+
+    def test_0055_article_content(self):
+        """
+        Tests that the article has been rendered properly.
+        """
+        with Transaction().start(DB_NAME, USER, CONTEXT):
+            article_category, = self.ArticleCategory.create([{
+                'title': 'Test Categ',
+                'unique_name': 'test-categ',
+            }])
+
+            article1, = self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'Test Article',
+                'content': 'Test Content',
+                'content_type': 'plain',
+                'sequence': 10,
+                'categories': [('add', [article_category.id])],
+                'attributes': [
+                    ('create', [{
+                        'name': 'google+',
+                        'value': 'abc',
+                    }])
+                ]
+            }])
+
+            # Plain content.
+            self.assertEqual(article1.__html__(), article1.content)
+
+            # HTML content.
+            article1.content = '<html><body><p>A paragraph.</p></body></html>'
+            article1.content_type = 'html'
+
+            self.assertEqual(article1.__html__(), article1.content)
+
+            # Markdown content.
+            article1.content = '**This is strong in markdown**'
+            article1.content_type = 'markdown'
+            article1.save()
+
+            self.assertIn(
+                '<strong>This is strong in markdown</strong>',
+                article1.__html__()
+            )
+
+            article1.content = '`A blockquote`'
+            article1.save()
+
+            self.assertIn(
+                '<p><code>A blockquote</code></p>',
+                article1.__html__()
+            )
+
+            # RST content.
+            article1.content = '*This is emphasis in rst*'
+            article1.content_type = 'rst'
+            article1.save()
+
+            self.assertIn(
+                '<em>This is emphasis in rst</em>',
+                article1.__html__()
+            )
 
 
 def suite():
