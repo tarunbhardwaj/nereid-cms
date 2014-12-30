@@ -34,7 +34,7 @@
             <field name="attributes"/>
         </page>
         <page string="Categories" id="article-categories">
-            <field name="category" />
+            <field name="categories" />
         </page>
     </notebook>
     <field name="state" colspan="2"/>
