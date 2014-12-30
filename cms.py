@@ -539,7 +539,7 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
             order.append(('write_date', 'ASC'))
 
         articles = Pagination(
-            Article, [('category', '=', category.id)], page,
+            Article, [('categories', '=', category.id)], page,
             category.articles_per_page, order=order
         )
         return render_template(
@@ -582,7 +582,7 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
 
         articles = NereidArticle.search([
             ('state', '=', 'published'),
-            ('category', '=', self.id)
+            ('categories', '=', self.id)
         ])
         return map(int, articles)
 
@@ -594,7 +594,7 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
 
         articles = NereidArticle.search([
             ('state', '=', 'published'),
-            ('category', '=', self.id)
+            ('categories', '=', self.id)
         ])
         return [
             article.get_menu_item(max_depth=max_depth - 1)
@@ -625,8 +625,8 @@ class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
     attributes = fields.One2Many(
         'nereid.cms.article.attribute', 'article', 'Attributes'
     )
-    category = fields.Many2Many(
-        'nereid.cms.category-article', 'article', 'category', 'Category',
+    categories = fields.Many2Many(
+        'nereid.cms.category-article', 'article', 'category', 'Categories',
     )
     content_type = fields.Selection(
         'content_type_selection', 'Content Type',

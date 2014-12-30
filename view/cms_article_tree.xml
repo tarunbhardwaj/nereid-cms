@@ -1,7 +1,6 @@
 <tree string="CMS Articles">
     <field name="title" />
     <field name="uri" />
-    <field name="category" />
     <field name="content_type" />
     <field name="sequence" />
     <field name="author" />

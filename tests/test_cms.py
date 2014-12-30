@@ -120,7 +120,7 @@ class TestCMS(NereidTestCase):
             'uri': 'test-article',
             'content': 'Test Content',
             'sequence': 10,
-            'category': [('add', [article_categ.id])],
+            'categories': [('add', [article_categ.id])],
         }])
 
     def test0005views(self):
@@ -161,7 +161,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article1',
                 'content': 'Test Content',
                 'sequence': 10,
-                'category': [('add', [article_categ1.id])],
+                'categories': [('add', [article_categ1.id])],
                 'state': 'archived'
             }])
             self.Article.create([{
@@ -169,7 +169,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article2',
                 'content': 'Test Content',
                 'sequence': 20,
-                'category': [('add', [article_categ1.id])],
+                'categories': [('add', [article_categ1.id])],
                 'state': 'published'
             }])
             self.Article.create([{
@@ -177,7 +177,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article3',
                 'content': 'Test Content',
                 'sequence': 30,
-                'category': [('add', [article_categ2.id])],
+                'categories': [('add', [article_categ2.id])],
                 'state': 'archived'
             }])
             self.Article.create([{
@@ -185,7 +185,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'test-article4',
                 'content': 'Test Content',
                 'sequence': 40,
-                'category': [('add', [article_categ2.id])],
+                'categories': [('add', [article_categ2.id])],
                 'state': 'published'
             }])
 
@@ -258,7 +258,7 @@ class TestCMS(NereidTestCase):
                 'uri': 'Test Article',
                 'content': 'Test Content',
                 'sequence': 10,
-                'category': [('add', [article_category.id])],
+                'categories': [('add', [article_category.id])],
                 'attributes': [
                     ('create', [{
                         'name': 'google+',
@@ -290,7 +290,7 @@ class TestCMS(NereidTestCase):
                 'content': 'Test Content',
                 'content_type': 'plain',
                 'sequence': 10,
-                'category': [('add', [article_category.id])],
+                'categories': [('add', [article_category.id])],
                 'attributes': [
                     ('create', [{
                         'name': 'google+',
