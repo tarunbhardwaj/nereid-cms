@@ -3,7 +3,7 @@
 
     nereid_cms test_banner
 
-    :copyright: (c) 2010-2013 by Openlabs Technologies & Consulting (P) Ltd.
+    :copyright: (c) 2010-2015 by Openlabs Technologies & Consulting (P) Ltd.
     :license: GPLv3, see LICENSE for more details
 
 '''
@@ -30,7 +30,6 @@ class TestBanner(NereidTestCase):
         self.File = POOL.get('nereid.static.file')
         self.Company = POOL.get('company.company')
         self.NereidUser = POOL.get('nereid.user')
-        self.UrlMap = POOL.get('nereid.url_map')
         self.Language = POOL.get('ir.lang')
         self.NereidWebsite = POOL.get('nereid.website')
         self.Party = POOL.get('party.party')
@@ -89,7 +88,6 @@ class TestBanner(NereidTestCase):
         }])
 
         # Create website
-        url_map, = self.UrlMap.search([], limit=1)
         en_us, = self.Language.search([('code', '=', 'en_US')])
         self.locale_en_us, = self.Locale.create([{
             'code': 'en_US',
@@ -98,7 +96,6 @@ class TestBanner(NereidTestCase):
         }])
         return self.NereidWebsite.create([{
             'name': 'localhost',
-            'url_map': url_map,
             'company': company,
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
@@ -262,7 +259,6 @@ class TestGetHtml(NereidTestCase):
         self.Folder = POOL.get('nereid.static.folder')
         self.Company = POOL.get('company.company')
         self.NereidUser = POOL.get('nereid.user')
-        self.UrlMap = POOL.get('nereid.url_map')
         self.Language = POOL.get('ir.lang')
         self.NereidWebsite = POOL.get('nereid.website')
         self.Party = POOL.get('party.party')
@@ -323,7 +319,6 @@ class TestGetHtml(NereidTestCase):
         }])
 
         # Create website
-        url_map, = self.UrlMap.search([], limit=1)
         en_us, = self.Language.search([('code', '=', 'en_US')])
         self.locale_en_us, = self.Locale.create([{
             'code': 'en_US',
@@ -332,7 +327,6 @@ class TestGetHtml(NereidTestCase):
         }])
         return self.NereidWebsite.create([{
             'name': 'localhost',
-            'url_map': url_map,
             'company': company,
             'application_user': USER,
             'default_locale': self.locale_en_us.id,
