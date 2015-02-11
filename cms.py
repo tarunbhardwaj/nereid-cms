@@ -9,6 +9,8 @@
 '''
 import time
 from string import Template
+import pytz
+from datetime import datetime
 
 from nereid import context_processor
 from nereid import (
@@ -19,6 +21,7 @@ from nereid.helpers import slugify, url_for
 from nereid.contrib.pagination import Pagination
 from nereid.contrib.sitemap import SitemapIndex, SitemapSection
 from werkzeug.utils import secure_filename
+from werkzeug.contrib.atom import AtomFeed
 from nereid.ctx import has_request_context
 
 from trytond.pyson import Eval, Not, Equal, In
@@ -601,6 +604,39 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
             for article in articles
         ]
 
+    def serialize(self, purpose=None):
+        """
+        Article category serialize method
+        """
+        if purpose == 'atom':
+            return {
+                'term': self.unique_name,
+            }
+        elif hasattr(super(ArticleCategory, self), 'serialize'):
+            return super(ArticleCategory, self).serialize(purpose=purpose)
+
+    @classmethod
+    @route('/article-category/<uri>.atom')
+    def atom_feed(cls, uri):
+        """
+        Returns atom feed for articles published under a particular category.
+        """
+        try:
+            category, = cls.search([
+                ('unique_name', '=', uri),
+            ], limit=1)
+        except ValueError:
+            abort(404)
+
+        feed = AtomFeed(
+            "Articles by Category %s" % category.unique_name,
+            feed_url=request.url, url=request.host_url
+        )
+        for article in category.published_articles:
+            feed.add(**article.serialize(purpose='atom'))
+
+        return feed.get_response()
+
 
 class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
     "CMS Articles"
@@ -845,6 +881,72 @@ class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
             'title': self.title,
             'link': self.get_absolute_url(),
         }
+
+    def atom_id(self):
+        """
+        Returns an atom ID for the article
+        """
+        return (
+            'tag:' + request.nereid_website.name + ',' +
+            self.publish_date + ':Article/' + str(self.id)
+        )
+
+    def atom_publish_date(self):
+        """
+        Returns the article's publish date with timezone set as UTC
+        """
+        return pytz.utc.localize(
+            datetime.combine(self.published_on, datetime.min.time())
+        )
+
+    def serialize(self, purpose=None):
+        """
+        Serialize Article records
+        """
+        if purpose == 'atom':
+            # The keys in the dictionary returned are used by Werkzeug's
+            # AtomFeed class.
+            return {
+                'id': self.atom_id(),
+                'title': self.title,
+                'author': (
+                    self.author.serialize(purpose=purpose) if self.author
+                    else None
+                ),
+                'content': self.content,
+                'content_type': (
+                    'text' if self.content_type == 'plain' else 'html'
+                ),
+                'link': {
+                    'rel': 'alternate',
+                    'type': 'text/html',
+                    'href': self.get_absolute_url(external=True),
+                },
+                'category': [
+                    category.serialize(purpose=purpose)
+                    for category in self.categories
+                ],
+                'published': self.atom_publish_date(),
+                'updated': self.write_date or self.atom_publish_date(),
+            }
+        elif hasattr(super(Article, self), 'serialize'):
+            return super(Article, self).serialize(purpose=purpose)
+
+    @classmethod
+    @route('/article/all.atom')
+    def atom_feed(cls):
+        """
+        Renders the atom feed for all articles.
+        """
+        feed = AtomFeed(
+            "All Articles", feed_url=request.url, url=request.host_url
+        )
+        for article in cls.search([
+            ('state', '=', 'published')
+        ]):
+            feed.add(**article.serialize(purpose='atom'))
+
+        return feed.get_response()
 
 
 class ArticleAttribute(ModelSQL, ModelView):
