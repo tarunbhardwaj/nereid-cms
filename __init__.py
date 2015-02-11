@@ -14,6 +14,7 @@ from .cms import (
     Article, ArticleAttribute, Website, NereidStaticFile,
     ArticleCategoryRelation,
 )
+from user import NereidUser
 
 
 def register():
@@ -30,5 +31,6 @@ def register():
         NereidStaticFile,
         Website,
         ArticleCategoryRelation,
+        NereidUser,
         module='nereid_cms', type_='model'
     )

@@ -336,6 +336,89 @@ class TestCMS(NereidTestCase):
                 article1.__html__()
             )
 
+    def test_0060_atom_feeds(self):
+        """
+        Tests that the render of atom xml feeds is working correctly.
+        """
+        with Transaction().start(DB_NAME, USER, CONTEXT):
+            self.setup_defaults()
+            app = self.get_app()
+
+            article_categ1, = self.ArticleCategory.create([{
+                'title': 'Test Categ',
+                'unique_name': 'test-categ1',
+            }])
+            article_categ2, = self.ArticleCategory.create([{
+                'title': 'Test Categ',
+                'unique_name': 'test-categ2',
+            }])
+
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article1',
+                'content': 'Test Content',
+                'sequence': 10,
+                'categories': [('add', [article_categ1.id])],
+                'state': 'published',
+                'author': self.registered_user.id,
+            }])
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article2',
+                'content': 'Test Content',
+                'sequence': 20,
+                'categories': [('add', [article_categ1.id])],
+                'state': 'published',
+                'author': self.registered_user.id,
+            }])
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article3',
+                'content': 'Test Content',
+                'sequence': 30,
+                'categories': [('add', [article_categ2.id])],
+                'state': 'archived',
+                'author': self.registered_user.id,
+            }])
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article4',
+                'content': 'Test Content',
+                'sequence': 40,
+                'categories': [('add', [article_categ2.id])],
+                'state': 'published',
+                'author': self.registered_user.id,
+            }])
+
+            with app.test_client() as c:
+                # Try rendering all articles.
+                rv = c.get('/article/all.atom')
+                self.assertEqual(
+                    rv.data.count('<entry'),
+                    len(self.Article.search([('state', '=', 'published')]))
+                )
+
+                rv = c.get(
+                    '/article-category/%s.atom' % article_categ1.unique_name
+                )
+                self.assertEqual(
+                    rv.data.count('<entry'),
+                    len(article_categ1.published_articles)
+                )
+
+                rv = c.get('/article-author/%d.atom' % self.registered_user.id)
+                self.assertEqual(
+                    rv.data.count('<entry'),
+                    len(self.Article.search([
+                        ('author', '=', self.registered_user.id),
+                        ('state', '=', 'published'),
+                    ]))
+                )
+
+                # Try rendering for a category that does not exist.
+                rv = c.get('/article-category/%d.atom' % 70)
+                self.assertEqual(rv.status_code, 404)
+
 
 def suite():
     "CMS test suite"
