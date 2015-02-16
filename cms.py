@@ -621,8 +621,6 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
         """
         Returns atom feed for articles published under a particular category.
         """
-        Article = Pool().get('nereid.cms.article')
-
         try:
             category, = cls.search([
                 ('unique_name', '=', uri),
@@ -634,8 +632,8 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
             "Articles by Category %s" % category.unique_name,
             feed_url=request.url, url=request.host_url
         )
-        for article_id in category.published_articles:
-            feed.add(**Article(article_id).serialize(purpose='atom'))
+        for article in category.published_articles:
+            feed.add(**article.serialize(purpose='atom'))
 
         return feed.get_response()
 
