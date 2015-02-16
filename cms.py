@@ -583,10 +583,16 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
         """
         NereidArticle = Pool().get('nereid.cms.article')
 
+        order = []
+        if self.sort_order == 'recent_first':
+            order.append(('write_date', 'DESC'))
+        elif self.sort_order == 'older_first':
+            order.append(('write_date', 'ASC'))
+
         articles = NereidArticle.search([
             ('state', '=', 'published'),
-            ('categories', '=', self.id)
-        ])
+            ('categories', '=', self.id),
+        ], order=order)
         return map(int, articles)
 
     def get_children(self, max_depth):
