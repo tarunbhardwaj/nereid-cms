@@ -1,27 +1,30 @@
+<?xml version="1.0"?>
 <form string="CMS Article Category">
     <label name="title" />
-    <field name="title" />
+    <field name="title" colspan="3"/>
     <label name="unique_name" />
     <field name="unique_name" />
     <label name="active" />
     <field name="active" />
-    <label name="template" />
-    <field name="template" />
-    <label name="banner" />
-    <field name="banner" />
-    <label name="articles_per_page" />
-    <field name="articles_per_page" />
-    <label name="sort_order" />
-    <field name="sort_order" />
-    <field name="articles" colspan="4" />
-    <separator
-        colspan="4"
-        string="Description"
-        id="sepr_desc"/>
-    <field name="description" colspan="4" />
-    <separator
-        colspan="4"
-        string="Published Articles"
-        id="sepr_articles1"/>
-    <field name="published_articles" colspan="4"/>
+    <notebook colspan="4">
+        <page id="articles" string="Articles">
+            <field name="articles" colspan="4" />
+        </page>
+        <page id="published_articles" string="Published Articles" >
+            <field name="published_articles" colspan="4"/>
+        </page>
+        <page  id="description" string="Description">
+            <field name="description" colspan="4" />
+        </page>
+        <page id="display_settings" string="Display Settings">
+            <label name="template" />
+            <field name="template" />
+            <label name="articles_per_page" />
+            <field name="articles_per_page" />
+            <label name="banner" />
+            <field name="banner" />
+            <label name="sort_order" />
+            <field name="sort_order" />
+        </page>
+    </notebook>
 </form>
