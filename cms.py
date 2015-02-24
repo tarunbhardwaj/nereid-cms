@@ -11,7 +11,6 @@ import time
 from string import Template
 import pytz
 from datetime import datetime
-from sql import Table
 
 from nereid import context_processor
 from nereid import (
@@ -1068,8 +1067,8 @@ class ArticleCategoryRelation(ModelSQL):
 
         # Move data from category to categories
         if table.column_exist('category'):
-            article = Table('nereid.cms.article')
-            article_categ_rel = Table('nereid.cms.category-article')
+            article = Article.__table__()
+            article_categ_rel = cls.__table__()
 
             article_select = article.select(article.id, article.category)
             cursor.execute(*article_categ_rel.insert(
