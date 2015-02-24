@@ -11,6 +11,7 @@ import time
 from string import Template
 import pytz
 from datetime import datetime
+from sql import Table
 
 from nereid import context_processor
 from nereid import (
@@ -1056,3 +1057,26 @@ class ArticleCategoryRelation(ModelSQL):
     article = fields.Many2One(
         'nereid.cms.article', 'Article', select=True
     )
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+        Article = Pool().get('nereid.cms.article')
+
+        table = TableHandler(cursor, Article, module_name)
+
+        # Move data from category to categories
+        if table.column_exist('category'):
+            article = Table('nereid.cms.article')
+            article_categ_rel = Table('nereid.cms.category-article')
+
+            article_select = article.select(article.id, article.category)
+            cursor.execute(*article_categ_rel.insert(
+                columns=[article_categ_rel.article, article_categ_rel.category],
+                values=article_select
+            ))
+
+            table.drop_column('category')
+
+        super(ArticleCategoryRelation, cls).__register__(module_name)
