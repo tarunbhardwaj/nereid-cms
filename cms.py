@@ -542,8 +542,10 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
             order.append(('write_date', 'ASC'))
 
         articles = Pagination(
-            Article, [('categories', '=', category.id)], page,
-            category.articles_per_page, order=order
+            Article, [
+                ('categories', '=', category.id),
+                ('state', '=', 'published')
+            ], page, category.articles_per_page, order=order
         )
         return render_template(
             category.template, category=category, articles=articles)
