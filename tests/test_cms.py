@@ -107,7 +107,7 @@ class TestCMS(NereidTestCase):
         }])
 
         # Create an article category
-        article_categ, = self.ArticleCategory.create([{
+        self.article_categ, = self.ArticleCategory.create([{
             'title': 'Test Categ',
             'unique_name': 'test-categ',
         }])
@@ -117,7 +117,7 @@ class TestCMS(NereidTestCase):
             'uri': 'test-article',
             'content': 'Test Content',
             'sequence': 10,
-            'categories': [('add', [article_categ.id])],
+            'categories': [('add', [self.article_categ.id])],
         }])
 
     def test0005views(self):
@@ -196,10 +196,27 @@ class TestCMS(NereidTestCase):
         with Transaction().start(DB_NAME, USER, CONTEXT):
             self.setup_defaults()
             app = self.get_app()
+            self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article1',
+                'content': 'Test Content',
+                'sequence': 10,
+                'categories': [('add', [self.article_categ.id])],
+                'state': 'published'
+            }, {
+                'title': 'Test Article',
+                'uri': 'test-article2',
+                'content': 'Test content',
+                'sequence': 20,
+                'categories': [('add', [self.article_categ.id])],
+                'state': 'draft'
+            }])
             with app.test_client() as c:
                 response = c.get('/article-category/test-categ/')
                 self.assertEqual(response.status_code, 200)
                 self.assertEqual(response.data, '1')
+                self.assertEqual(len(self.article_categ.published_articles), 1)
+                self.assertEqual(len(self.article_categ.articles), 3)
 
     def test_0020_article(self):
         "Successful rendering of an article page"
