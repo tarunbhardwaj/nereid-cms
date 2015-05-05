@@ -44,6 +44,11 @@ class TestCMS(NereidTestCase):
             ''',
             'article-category.jinja': '{{ articles|length }}',
             'article.jinja': '{{ article.content }}',
+            'test-category.jinja':
+            '''{% for article in articles %}
+            {{ article.uri }}
+            {% endfor %}
+            ''',
         }
 
     def get_template_source(self, name):
@@ -432,6 +437,39 @@ class TestCMS(NereidTestCase):
                 # Try rendering for a category that does not exist.
                 rv = c.get('/article-category/%d.atom' % 70)
                 self.assertEqual(rv.status_code, 404)
+
+    def test_0065_sort_articles_by_sequence_on_article_category_page(self):
+        "Sort Articles by SEquence on Articles Category Page"
+
+        with Transaction().start(DB_NAME, USER, CONTEXT):
+            self.setup_defaults()
+
+            self.article_categ.sort_order = 'sequence'
+            self.article_categ.template = 'test-category.jinja'
+            self.article_categ.save()
+
+            article1, article2 = self.Article.create([{
+                'title': 'Test Article',
+                'uri': 'test-article1',
+                'content': 'Test Content',
+                'sequence': 30,
+                'categories': [('add', [self.article_categ.id])],
+                'state': 'published',
+            }, {
+                'title': 'Test Article',
+                'uri': 'test-article2',
+                'content': 'Test Content',
+                'sequence': 20,
+                'categories': [('add', [self.article_categ.id])],
+                'state': 'published',
+            }])
+
+            app = self.get_app()
+            with app.test_client() as c:
+                rv = c.get('/article-category/test-categ/')
+            self.assertTrue(
+                rv.data.find(article1.uri) > rv.data.find(article2.uri)
+            )
 
 
 def suite():

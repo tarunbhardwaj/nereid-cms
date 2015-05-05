@@ -478,6 +478,7 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
     # Article Category can have a banner
     banner = fields.Many2One('nereid.cms.banner', 'Banner')
     sort_order = fields.Selection([
+        ('sequence', 'Sequence'),
         ('older_first', 'Older First'),
         ('recent_first', 'Recent First'),
     ], 'Sort Order')
@@ -540,6 +541,8 @@ class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):
             order.append(('write_date', 'DESC'))
         elif category.sort_order == 'older_first':
             order.append(('write_date', 'ASC'))
+        elif category.sort_order == 'sequence':
+            order.append(('sequence', 'ASC'))
 
         articles = Pagination(
             Article, [
