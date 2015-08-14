@@ -66,12 +66,12 @@ requires.append(
 test_requirements = ['docutils', 'markdown']
 
 setup(
-    name='trytond_nereid_cms',
+    name='fio_nereid_cms',
     version=info.get('version', '0.0.1'),
     description='Tryton Nereid CMS',
-    author='Openlabs Technologies & Consulting (P) Limited',
-    author_email='info@openlabs.co.in',
-    url='http://www.openlabs.co.in/',
+    author='Fulfil.IO Inc., Openlabs Technologies & Consulting (P) Limited',
+    author_email='info@fulfil.io',
+    url='http://www.fulfil.io/',
     package_dir={'trytond.modules.nereid_cms': '.'},
     packages=[
         'trytond.modules.nereid_cms',
@@ -86,14 +86,14 @@ setup(
         'Development Status :: 4 - Beta',
         'Environment :: Plugins',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
+        'License :: OSI Approved :: BSD License',
         'Natural Language :: English',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Framework :: Tryton',
         'Topic :: Office/Business',
     ],
-    license='GPL-3',
+    license='BSD',
     install_requires=requires,
     tests_require=test_requirements,
     zip_safe=False,

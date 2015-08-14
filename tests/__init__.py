@@ -4,8 +4,6 @@
 
     Collect all tests here
 
-    :copyright: (c) 2014 by Openlabs Technologies & Consulting (P) Limited
-    :license: BSD, see LICENSE for more details.
 """
 import unittest
 
