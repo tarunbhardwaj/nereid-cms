@@ -166,16 +166,16 @@ class TestBanner(NereidTestCase):
             }])
             folder, = self.Folder.create([{
                 'description': 'image',
-                'folder_name': 'image'
+                'name': 'image'
             }])
             file, = self.File.create([{
-                'name': 'logo',
+                'name': 'logo.png',
                 'folder': folder,
             }])
             self.Banner.create([{
                 'name': 'Test Image Banner',
                 'category': category,
-                'type': 'image',
+                'type': 'media',
                 'file': file,
                 'state': 'published'
             }])
@@ -186,10 +186,10 @@ class TestBanner(NereidTestCase):
                 html = objectify.fromstring(response.data)
                 self.assertEqual(
                     html.find('img').get('src'),
-                    '/static-file/image/logo'
+                    '/static-file/image/logo.png'
                 )
 
-    def test_0030_remote_image(self):
+    def test_0030_remote_media(self):
         """
         Test the remote image type banner
         """
@@ -202,8 +202,8 @@ class TestBanner(NereidTestCase):
             self.Banner.create([{
                 'name': 'Test Remote Image Banner',
                 'category': category,
-                'type': 'remote_image',
-                'remote_image_url': 'http://some/remote/url',
+                'type': 'remote_media',
+                'remote_media_url': 'http://some/remote/url.jpg',
                 'state': 'published'
             }])
 
@@ -213,7 +213,7 @@ class TestBanner(NereidTestCase):
                 html = objectify.fromstring(response.data)
                 self.assertEqual(
                     html.find('img').get('src'),
-                    'http://some/remote/url'
+                    'http://some/remote/url.jpg'
                 )
 
     def test_0040_custom_code(self):
@@ -345,16 +345,16 @@ class TestGetHtml(NereidTestCase):
 
             image, = self.Folder.create([{
                 'description': 'image',
-                'folder_name': 'image'
+                'name': 'image'
             }])
             file, = self.File.create([{
-                'name': 'logo',
+                'name': 'logo.png',
                 'folder': image,
             }])
             self.Banner.create([{
                 'name': 'Test Banner1',
                 'category': banner_category,
-                'type': 'image',
+                'type': 'media',
                 'file': file,
                 'state': 'published'
             }])
@@ -365,12 +365,12 @@ class TestGetHtml(NereidTestCase):
                 html = objectify.fromstring(rv.data)
                 self.assertEqual(
                     html.find('img').get('src'),
-                    '/static-file/image/logo'
+                    '/static-file/image/logo.png'
                 )
 
     def test_0020_get_html(self):
         """
-        Get Html for banners with type `remote_image`.
+        Get Html for banners with type `remote_media`.
         """
         with Transaction().start(DB_NAME, USER, CONTEXT):
             self.setup_defaults()
@@ -382,8 +382,8 @@ class TestGetHtml(NereidTestCase):
             banner, = self.Banner.create([{
                 'name': 'Test Banner2',
                 'category': banner_category,
-                'type': 'remote_image',
-                'remote_image_url':
+                'type': 'remote_media',
+                'remote_media_url':
                     'http://profile.ak.fbcdn.net/hprofile-ak-snc4'
                     '/187819_122589627793765_7532740_n.jpg',
                 'state': 'published'
@@ -391,7 +391,7 @@ class TestGetHtml(NereidTestCase):
             rv = banner.get_html()
             html = objectify.fromstring(rv)
             self.assertEqual(
-                html.find('img').get('src'), banner.remote_image_url
+                html.find('img').get('src'), banner.remote_media_url
             )
 
     def test_0030_get_html(self):

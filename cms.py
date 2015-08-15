@@ -6,6 +6,7 @@
 
 '''
 import time
+import mimetypes
 from string import Template
 import pytz
 from datetime import datetime
@@ -313,23 +314,28 @@ class Banner(Workflow, ModelSQL, ModelView):
 
     # Type related data
     type = fields.Selection([
-        ('image', 'Image'),
-        ('remote_image', 'Remote Image'),
+        ('image', 'Image'),  # TODO: Deprecate in 3.6
+        ('remote_image', 'Remote Image'),  # TODO: Deprecate in 3.6
+        ('media', 'Media'),
+        ('remote_media', 'Remote Media'),
         ('custom_code', 'Custom Code'),
     ], 'Type', required=True)
     file = fields.Many2One(
         'nereid.static.file', 'File',
         states={
-            'required': Equal(Eval('type'), 'image'),
-            'invisible': Not(Equal(Eval('type'), 'image'))
+            'required': In(Eval('type'), ['image', 'media']),
+            'invisible': Not(In(Eval('type'), ['image', 'media']))
         }
     )
-    remote_image_url = fields.Char(
-        'Remote Image URL',
+    remote_media_url = fields.Char(
+        'Remote Media URL',
         states={
-            'required': Equal(Eval('type'), 'remote_image'),
-            'invisible': Not(Equal(Eval('type'), 'remote_image'))
+            'required': In(Eval('type'), ['remote_media', 'remote_image']),
+            'invisible': Not(In(Eval('type'), ['remote_media', 'remote_image']))
         }
+    )
+    remote_image_url = fields.Function(
+        fields.Char('Remote Image URL'), 'get_remote_image_url'
     )
     custom_code = fields.Text(
         'Custom Code', translate=True,
@@ -343,25 +349,25 @@ class Banner(Workflow, ModelSQL, ModelView):
     height = fields.Integer(
         'Height',
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(In(Eval('type'), ['media', 'remote_media']))
         }
     )
     width = fields.Integer(
         'Width',
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(In(Eval('type'), ['media', 'remote_media']))
         }
     )
     alternative_text = fields.Char(
         'Alternative Text', translate=True,
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(In(Eval('type'), ['media', 'remote_media']))
         }
     )
     click_url = fields.Char(
         'Click URL', translate=True,
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(In(Eval('type'), ['media', 'remote_media']))
         }
     )
 
@@ -371,6 +377,22 @@ class Banner(Workflow, ModelSQL, ModelView):
             ('archived', 'Archived')
     ], 'State', required=True, select=True, readonly=True)
     reference = fields.Reference('Reference', selection='allowed_models')
+
+    @classmethod
+    def __register__(cls, module_name):
+        TableHandler = backend.get('TableHandler')
+        cursor = Transaction().cursor
+
+        super(Banner, cls).__register__(module_name)
+
+        table = TableHandler(cursor, cls, module_name)
+        if table.column_exist('remote_image_url'):  # pragma: no cover
+
+            # Delete the newly created remote_media_url column
+            table.drop_column('remote_media_url')
+
+            # Rename the remote_image_url column as remote_media_url
+            table.column_rename('remote_image_url', 'remote_media_url', True)
 
     @classmethod
     def __setup__(cls):
@@ -408,13 +430,17 @@ class Banner(Workflow, ModelSQL, ModelView):
 
         banner = self.read(
             [self], [
-                'type', 'click_url', 'file',
-                'remote_image_url', 'custom_code', 'height', 'width',
+                'type', 'click_url', 'file', 'file.mimetype',
+                'remote_media_url', 'custom_code', 'height', 'width',
                 'alternative_text', 'click_url'
             ]
         )[0]
 
-        if banner['type'] == 'image':
+        if banner['type'] in ['image', 'media']:
+            if not (banner['file.mimetype'] and
+                    banner['file.mimetype'].startswith('image')):
+                return "<!-- no html defined for mime type '%s' -->" % \
+                    banner['file.mimetype']
             # replace the `file` in the dictionary with the complete url
             # that is required to render the image based on static file
             file = StaticFile(banner['file'])
@@ -426,10 +452,15 @@ class Banner(Workflow, ModelSQL, ModelView):
                 u'</a>'
             )
             return image.substitute(**banner)
-        elif banner['type'] == 'remote_image':
+        elif banner['type'] in ['remote_image', 'remote_media']:
+            banner_mimetype = mimetypes.guess_type(
+                banner["remote_media_url"] or "")[0]
+            if not (banner_mimetype and banner_mimetype.startswith("image")):
+                return "<!-- no html defined for mime type '%s' -->" % \
+                    banner_mimetype
             image = Template(
                 u'<a href="$click_url">'
-                u'<img src="$remote_image_url" alt="$alternative_text"'
+                u'<img src="$remote_media_url" alt="$alternative_text"'
                 u' width="$width" height="$height"/>'
                 u'</a>')
             return image.substitute(**banner)
@@ -444,13 +475,20 @@ class Banner(Workflow, ModelSQL, ModelView):
 
     @staticmethod
     def default_type():
-        return 'image'
+        return 'media'
 
     @staticmethod
     def default_state():
         if 'published' in Transaction().context:
             return 'published'
         return 'draft'
+
+    def get_remote_image_url(self, name):
+        """
+        Return remote image url from remote media url
+        """
+        # TODO: deprecate in 3.6
+        return self.remote_media_url
 
 
 class ArticleCategory(ModelSQL, ModelView, CMSMenuItemMixin):

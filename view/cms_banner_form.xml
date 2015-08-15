@@ -13,26 +13,26 @@
         <page id="description" string="Description">
             <field name="description" colspan="4"/>
         </page>
-        <page id="image" string="Image"
+        <page id="media" string="Media"
                 states="{'invisible': Eval('type') == 'custom_code'}">
-            <separator id="image_to_display"
-                string="The image to be displayed as a banner:"
+            <separator id="media_to_display"
+                string="The media to be displayed as a banner:"
                 colspan="4"/>
             <label name="file"/>
             <field name="file" colspan="3"/>
-            <label name="remote_image_url"/>
-            <field name="remote_image_url" colspan="3"/>
+            <label name="remote_media_url"/>
+            <field name="remote_media_url" colspan="3"/>
             <separator id="click_url"
-                string="Link to go to when the image is clicked:"
+                string="Link to go to when the media is clicked:"
                 colspan="4"/>
             <field name="click_url" colspan="4"/>
             <separator id="alternative_text"
-                string="Alternate text for an image, if the image cannot be displayed:"
+                string="Alternate text for media, if the media cannot be displayed:"
                 colspan="4"/>
             <field name="alternative_text" colspan="4"/>
 
             <separator id="dimensions"
-                string="Dimension of the image"
+                string="Dimension of the media"
                 colspan="2"/>
             <newline/>
             <label name="height"/>
