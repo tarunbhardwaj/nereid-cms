@@ -22,7 +22,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.contrib.atom import AtomFeed
 from nereid.ctx import has_request_context
 
-from trytond.pyson import Eval, Not, Equal, In
+from trytond.pyson import Eval, Not, Equal
 from trytond.model import ModelSQL, ModelView, fields, Workflow
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
@@ -313,22 +313,14 @@ class Banner(Workflow, ModelSQL, ModelView):
 
     # Type related data
     type = fields.Selection([
-        ('image', 'Image'),
-        ('remote_image', 'Remote Image'),
+        ('media', 'Media'),
         ('custom_code', 'Custom Code'),
     ], 'Type', required=True)
     file = fields.Many2One(
         'nereid.static.file', 'File',
         states={
-            'required': Equal(Eval('type'), 'image'),
-            'invisible': Not(Equal(Eval('type'), 'image'))
-        }
-    )
-    remote_image_url = fields.Char(
-        'Remote Image URL',
-        states={
-            'required': Equal(Eval('type'), 'remote_image'),
-            'invisible': Not(Equal(Eval('type'), 'remote_image'))
+            'required': Equal(Eval('type'), 'media'),
+            'invisible': Not(Equal(Eval('type'), 'media'))
         }
     )
     custom_code = fields.Text(
@@ -343,25 +335,25 @@ class Banner(Workflow, ModelSQL, ModelView):
     height = fields.Integer(
         'Height',
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(Equal(Eval('type'), 'media'))
         }
     )
     width = fields.Integer(
         'Width',
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(Equal(Eval('type'), 'media'))
         }
     )
     alternative_text = fields.Char(
         'Alternative Text', translate=True,
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(Equal(Eval('type'), 'media'))
         }
     )
     click_url = fields.Char(
         'Click URL', translate=True,
         states={
-            'invisible': Not(In(Eval('type'), ['image', 'remote_image']))
+            'invisible': Not(Equal(Eval('type'), 'media'))
         }
     )
 
@@ -371,6 +363,19 @@ class Banner(Workflow, ModelSQL, ModelView):
             ('archived', 'Archived')
     ], 'State', required=True, select=True, readonly=True)
     reference = fields.Reference('Reference', selection='allowed_models')
+
+    @classmethod
+    def __register__(cls, module_name):
+        super(Banner, cls).__register__(module_name)
+
+        table = cls.__table__()
+        cursor = Transaction().cursor
+        # Update type from image to media
+        query = table.update(
+            columns=[table.type],
+            values=["media"],
+            where=(table.type == "image"))
+        cursor.execute(*query)
 
     @classmethod
     def __setup__(cls):
@@ -406,15 +411,20 @@ class Banner(Workflow, ModelSQL, ModelView):
         """Return the HTML content"""
         StaticFile = Pool().get('nereid.static.file')
 
+        # XXX: Use read, as all fields are not required
         banner = self.read(
             [self], [
-                'type', 'click_url', 'file',
-                'remote_image_url', 'custom_code', 'height', 'width',
+                'type', 'click_url', 'file', 'file.mimetype',
+                'custom_code', 'height', 'width',
                 'alternative_text', 'click_url'
             ]
         )[0]
 
-        if banner['type'] == 'image':
+        if banner['type'] == 'media':
+            if not (banner['file.mimetype'] and
+                    banner['file.mimetype'].startswith('image')):
+                return "<!-- no html defined for mime type '%s' -->" % \
+                    banner['file.mimetype']
             # replace the `file` in the dictionary with the complete url
             # that is required to render the image based on static file
             file = StaticFile(banner['file'])
@@ -425,13 +435,6 @@ class Banner(Workflow, ModelSQL, ModelView):
                 u' width="$width" height="$height"/>'
                 u'</a>'
             )
-            return image.substitute(**banner)
-        elif banner['type'] == 'remote_image':
-            image = Template(
-                u'<a href="$click_url">'
-                u'<img src="$remote_image_url" alt="$alternative_text"'
-                u' width="$width" height="$height"/>'
-                u'</a>')
             return image.substitute(**banner)
         elif banner['type'] == 'custom_code':
             return banner['custom_code']
@@ -444,7 +447,7 @@ class Banner(Workflow, ModelSQL, ModelView):
 
     @staticmethod
     def default_type():
-        return 'image'
+        return 'media'
 
     @staticmethod
     def default_state():
