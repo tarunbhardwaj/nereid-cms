@@ -254,10 +254,6 @@ msgctxt "field:nereid.cms.banner,reference:"
 msgid "Reference"
 msgstr "Verknüpfung"
 
-msgctxt "field:nereid.cms.banner,remote_image_url:"
-msgid "Remote Image URL"
-msgstr "Entfernte Bilddatei URL"
-
 msgctxt "field:nereid.cms.banner,sequence:"
 msgid "Sequence"
 msgstr "Reihenfolge"
@@ -601,10 +597,6 @@ msgstr "Spezifischer Code"
 msgctxt "selection:nereid.cms.banner,type:"
 msgid "Image"
 msgstr "Bild"
-
-msgctxt "selection:nereid.cms.banner,type:"
-msgid "Remote Image"
-msgstr "Entfernte Bilddatei"
 
 msgctxt "selection:nereid.cms.menuitem,target:"
 msgid "Blank"
