@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -26,13 +26,17 @@ msgctxt "field:nereid.cms.article,banner:"
 msgid "Banner"
 msgstr "Banner"
 
-msgctxt "field:nereid.cms.article,category:"
-msgid "Category"
-msgstr "Kategorie"
+msgctxt "field:nereid.cms.article,categories:"
+msgid "Categories"
+msgstr "Kategorien"
 
 msgctxt "field:nereid.cms.article,content:"
 msgid "Content"
 msgstr "Inhalt"
+
+msgctxt "field:nereid.cms.article,content_type:"
+msgid "Content Type"
+msgstr "Inhaltstyp"
 
 msgctxt "field:nereid.cms.article,create_date:"
 msgid "Create Date"
@@ -446,6 +450,18 @@ msgctxt "model:ir.action,name:action_cms_banners"
 msgid "CMS Banners"
 msgstr "CMS Banner"
 
+msgctxt "model:ir.action.act_window.domain,name:act_cms_articles_archived"
+msgid "Archived"
+msgstr "Archiviert"
+
+msgctxt "model:ir.action.act_window.domain,name:act_cms_articles_draft"
+msgid "Draft"
+msgstr "Entwurf"
+
+msgctxt "model:ir.action.act_window.domain,name:act_cms_articles_published"
+msgid "Published"
+msgstr "Publiziert"
+
 msgctxt "model:ir.ui.menu,name:menu_cms_articles"
 msgid "Articles"
 msgstr "Artikel"
@@ -531,10 +547,6 @@ msgid "Published"
 msgstr "Publiziert"
 
 msgctxt "selection:nereid.cms.article.attribute,name:"
-msgid ""
-msgstr ""
-
-msgctxt "selection:nereid.cms.article.attribute,name:"
 msgid "Blogger"
 msgstr "Blogger"
 
@@ -578,6 +590,10 @@ msgctxt "selection:nereid.cms.article.category,sort_order:"
 msgid "Recent First"
 msgstr "Neueste zuerst"
 
+msgctxt "selection:nereid.cms.article.category,sort_order:"
+msgid "Sequence"
+msgstr "Reihenfolge"
+
 msgctxt "selection:nereid.cms.banner,state:"
 msgid "Archived"
 msgstr "Archiviert"
@@ -593,10 +609,6 @@ msgstr "Publiziert"
 msgctxt "selection:nereid.cms.banner,type:"
 msgid "Custom Code"
 msgstr "Spezifischer Code"
-
-msgctxt "selection:nereid.cms.banner,type:"
-msgid "Image"
-msgstr "Bild"
 
 msgctxt "selection:nereid.cms.menuitem,target:"
 msgid "Blank"
@@ -619,6 +631,10 @@ msgid "View"
 msgstr "View"
 
 msgctxt "view:nereid.cms.article.category:"
+msgid "Articles"
+msgstr "Artikel"
+
+msgctxt "view:nereid.cms.article.category:"
 msgid "CMS Article Categories"
 msgstr "CMS Artikelkategorien"
 
@@ -629,6 +645,10 @@ msgstr "CMS Artikelkategorie"
 msgctxt "view:nereid.cms.article.category:"
 msgid "Description"
 msgstr "Beschreibung"
+
+msgctxt "view:nereid.cms.article.category:"
+msgid "Display Settings"
+msgstr "Anzeigeeinstellungen"
 
 msgctxt "view:nereid.cms.article.category:"
 msgid "Published Articles"
@@ -687,9 +707,8 @@ msgid "Published Banners"
 msgstr "Publizierte Banner"
 
 msgctxt "view:nereid.cms.banner:"
-msgid "Alternate text for an image, if the image cannot be displayed:"
-msgstr ""
-"Alternativer Text für ein Bild, falls das Bild nicht angezeigt werden kann"
+msgid "Alternate text for media, if the media cannot be displayed:"
+msgstr "Alternativer Text, falls das Medium nicht dargestellt werden kann:"
 
 msgctxt "view:nereid.cms.banner:"
 msgid "Archive"
@@ -712,24 +731,24 @@ msgid "Description"
 msgstr "Beschreibung"
 
 msgctxt "view:nereid.cms.banner:"
-msgid "Dimension of the image"
-msgstr "Abmessungen des Bilds"
+msgid "Dimension of the media"
+msgstr "Dimension"
 
 msgctxt "view:nereid.cms.banner:"
-msgid "Image"
-msgstr "Bild"
+msgid "Link to go to when the media is clicked:"
+msgstr "Aufzurufender Link, wenn auf das Medium geklickt wird:"
 
 msgctxt "view:nereid.cms.banner:"
-msgid "Link to go to when the image is clicked:"
-msgstr "Link, der aufgerufen werden soll, wenn das Bild angeklickt wird."
+msgid "Media"
+msgstr "Medien"
 
 msgctxt "view:nereid.cms.banner:"
 msgid "Publish"
 msgstr "Publizieren"
 
 msgctxt "view:nereid.cms.banner:"
-msgid "The image to be displayed as a banner:"
-msgstr "Das Bild, das als Banner angezeigt werden soll."
+msgid "The media to be displayed as a banner:"
+msgstr "Das als Banner angezeigte Medium:"
 
 msgctxt "view:nereid.cms.banner:"
 msgid ""
