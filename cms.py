@@ -226,10 +226,11 @@ class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
             res['record'] = self.record
             res['link'] = self.record.get_absolute_url()
 
-        if max_depth:
+        if max_depth > 0:
             res['children'] = self.get_children(max_depth=max_depth - 1)
 
-        if self.type_ == 'record' and not res.get('children') and max_depth:
+        if (self.type_ == 'record' and not res.get('children')
+                and max_depth > 0):
             res['children'] = self.record.get_children(
                 max_depth=max_depth - 1
             )
