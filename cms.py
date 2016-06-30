@@ -229,8 +229,8 @@ class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
         if max_depth > 0:
             res['children'] = self.get_children(max_depth=max_depth - 1)
 
-        if (self.type_ == 'record' and not res.get('children')
-                and max_depth > 0):
+        if (self.type_ == 'record' and not res.get('children') and
+                max_depth > 0):
             res['children'] = self.record.get_children(
                 max_depth=max_depth - 1
             )
