@@ -654,7 +654,6 @@ class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
     title = fields.Char('Title', required=True, select=True, translate=True)
     content = fields.Text('Content', required=True, translate=True)
     template = fields.Char('Template', required=True)
-    active = fields.Boolean('Active', select=True)
     image = fields.Many2One('nereid.static.file', 'Image')
     employee = fields.Many2One('company.employee', 'Employee')
     author = fields.Many2One('nereid.user', 'Author')
@@ -784,10 +783,6 @@ class Article(Workflow, ModelSQL, ModelView, CMSMenuItemMixin):
         MenuItem = Pool().get('nereid.cms.menuitem')
 
         return MenuItem.allowed_models()
-
-    @staticmethod
-    def default_active():
-        return True
 
     @fields.depends('title', 'uri')
     def on_change_title(self):
