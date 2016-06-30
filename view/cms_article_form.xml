@@ -8,8 +8,6 @@
         <field name="template" />
         <label name="image"/>
         <field name="image"/>
-        <label name="active" />
-        <field name="active" />
     </group>
     <notebook colspan="6">                            
         <page string="Content" id="content">
