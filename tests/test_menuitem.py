@@ -8,8 +8,7 @@
 import unittest
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
-from trytond.transaction import Transaction
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 from nereid.testing import NereidTestCase
 
 
@@ -91,56 +90,56 @@ class TestMenuItem(NereidTestCase):
             'currencies': [('add', [usd.id])],
         }])
 
+    @with_transaction()
     def test_0010__menuitem(self):
         """
         Test creation of menuitem
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            category, = self.ArticleCategory.create([{
-                'title': 'blog',
-                'unique_name': 'blog',
-            }])
+        category, = self.ArticleCategory.create([{
+            'title': 'blog',
+            'unique_name': 'blog',
+        }])
 
-            article, = self.Article.create([{
-                'uri': 'hello-world',
-                'title': 'Hello World',
-                'content': 'Test content',
-                'sequence': 10,
-                'state': 'published',
-                'categories': [('add', [category.id])],
-            }])
-            main_view, = self.MenuItem.create([{
-                'type_': 'view',
-                'title': 'Test Title',
-            }])
-            menu1, menu2, menu3 = self.MenuItem.create([{
-                'type_': 'static',
-                'title': 'Test Title',
-                'link': 'http://openlabs.co.in/',
-                'parent': main_view
-            }, {
-                'type_': 'record',
-                'title': 'About Us',
-                'record': '%s,%s' % (article.__name__, article.id),
-                'parent': main_view
-            }, {
-                'type_': 'record',
-                'title': 'Blog',
-                'record': '%s,%s' % (category.__name__, category.id),
-                'parent': main_view
-            }])
+        article, = self.Article.create([{
+            'uri': 'hello-world',
+            'title': 'Hello World',
+            'content': 'Test content',
+            'sequence': 10,
+            'state': 'published',
+            'categories': [('add', [category.id])],
+        }])
+        main_view, = self.MenuItem.create([{
+            'type_': 'view',
+            'title': 'Test Title',
+        }])
+        menu1, menu2, menu3 = self.MenuItem.create([{
+            'type_': 'static',
+            'title': 'Test Title',
+            'link': 'http://openlabs.co.in/',
+            'parent': main_view
+        }, {
+            'type_': 'record',
+            'title': 'About Us',
+            'record': '%s,%s' % (article.__name__, article.id),
+            'parent': main_view
+        }, {
+            'type_': 'record',
+            'title': 'Blog',
+            'record': '%s,%s' % (category.__name__, category.id),
+            'parent': main_view
+        }])
 
-            self.assert_(menu1)
-            self.assert_(menu2)
-            self.assert_(menu3)
+        self.assert_(menu1)
+        self.assert_(menu2)
+        self.assert_(menu3)
 
-            self.setup_defaults()
-            app = self.get_app()
-            with app.test_request_context('/'):
-                rv = main_view.get_menu_item(max_depth=10)
-            for child in rv['children']:
-                if child['type_'] == 'record' and child['record'] == category:
-                    self.assertEqual(len(child['children']), 1)
+        self.setup_defaults()
+        app = self.get_app()
+        with app.test_request_context('/'):
+            rv = main_view.get_menu_item(max_depth=10)
+        for child in rv['children']:
+            if child['type_'] == 'record' and child['record'] == category:
+                self.assertEqual(len(child['children']), 1)
 
 
 def suite():

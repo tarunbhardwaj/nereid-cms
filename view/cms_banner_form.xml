@@ -13,8 +13,7 @@
         <page id="description" string="Description">
             <field name="description" colspan="4"/>
         </page>
-        <page id="media" string="Media"
-                states="{'invisible': Eval('type') == 'custom_code'}">
+        <page id="media" string="Media">
             <separator id="media_to_display"
                 string="The media to be displayed as a banner:"
                 colspan="4"/>
@@ -39,8 +38,7 @@
             <label name="width"/>
             <field name="width"/>
         </page>
-        <page id="custom_code" string="Custom Code"
-                states="{'invisible': Eval('type') != 'custom_code'}">
+        <page id="custom_code" string="Custom Code">
             <separator id="custom_code"
                 string="Write the custom code below and the code would be placed in lieu of the banner"
                 colspan="4"/>
