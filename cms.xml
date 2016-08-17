@@ -34,14 +34,14 @@
         <record model="ir.action.act_window" id="act_cms_menuitems_tree">
             <field name="name">CMS Menuitems</field>
             <field name="res_model">nereid.cms.menuitem</field>
-            <field name="domain">[('parent', '=', None)]</field>
+            <field name="domain" eval="[('parent', '=', None)]" pyson="1"/>
         </record>
         <record model="ir.action.act_window.view" id="act_cms_menuitems_tree_view1">
             <field name="sequence" eval="10"/>
             <field name="view" ref="cms_menuitems_view_tree2"/>
             <field name="act_window" ref="act_cms_menuitems_tree"/>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_menuitems_tree_view2">
             <field name="sequence" eval="20" />
             <field name="view" ref="cms_menuitems_view_form" />
@@ -49,46 +49,46 @@
         </record>
         <menuitem parent="menu_nereid_cms_menus" sequence="20"
             action="act_cms_menuitems_tree" id="menu_cms_menuitems_tree"/>
-            
+
         <record model="ir.action.act_window" id="act_cms_menuitems_form">
             <field name="name">CMS Menuitems</field>
             <field name="res_model">nereid.cms.menuitem</field>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_menuitems_form_view1">
             <field name="sequence" eval="10" />
             <field name="view" ref="cms_menuitems_view_tree" />
             <field name="act_window" ref="act_cms_menuitems_form" />
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_menuitems_form_view2">
             <field name="sequence" eval="20" />
             <field name="view" ref="cms_menuitems_view_form" />
             <field name="act_window" ref="act_cms_menuitems_form" />
         </record>
         <menuitem name="Menuitems" sequence="10"
-            id="menu_nereid_cms_menuitems" 
+            id="menu_nereid_cms_menuitems"
             parent="menu_cms_menuitems_tree"
             action="act_cms_menuitems_form" />
-            
-        
+
+
         <record model="ir.action.act_window" id="act_cms_menuitems_form_new">
             <field name="name">New Menuitem</field>
             <field name="res_model">nereid.cms.menuitem</field>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_menuitems_form_view_new">
             <field name="sequence" eval="10" />
             <field name="view" ref="cms_menuitems_view_form" />
             <field name="act_window" ref="act_cms_menuitems_form_new" />
         </record>
         <menuitem name="New Menuitem" sequence="10"
-            id="menu_nereid_cms_menuitems_new" 
+            id="menu_nereid_cms_menuitems_new"
             parent="menu_cms_menuitems_tree"
             action="act_cms_menuitems_form_new" />
 
         <!-- Articles -->
-        <menuitem id="menu_cms_articles" name="Articles" 
+        <menuitem id="menu_cms_articles" name="Articles"
             parent="menu_nereid_cms" />
 
         <record model="ir.ui.view" id="cms_article_categ_view_form">
@@ -107,20 +107,20 @@
             <field name="name">CMS Article Categories</field>
             <field name="res_model">nereid.cms.article.category</field>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_article_category_form_view1">
             <field name="sequence" eval="20"/>
             <field name="view" ref="cms_article_categ_view_form"/>
             <field name="act_window" ref="action_cms_article_category"/>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_article_category_form_view2">
             <field name="sequence" eval="10"/>
             <field name="view" ref="cms_article_categ_view_tree"/>
             <field name="act_window" ref="action_cms_article_category"/>
         </record>
 
-        <menuitem action="action_cms_article_category" 
+        <menuitem action="action_cms_article_category"
           id="menu_cms_articles_category"
           name="Article Categories" parent="menu_cms_articles" />
 
@@ -142,29 +142,29 @@
     	</record>
 	<record model="ir.action.act_window.domain" id="act_cms_articles_draft">
             <field name="name">Draft</field>
-            <field name="sequence" eval="20"/>
-            <field name="domain">[('state', '=', 'draft')]</field>
+            <field name="sequence" eval="10"/>
+            <field name="domain" eval="[('state', '=', 'draft')]" pyson="1"/>
             <field name="act_window" ref="action_cms_articles"/>
       	</record>
     	<record model="ir.action.act_window.domain" id="act_cms_articles_published">
             <field name="name">Published</field>
-            <field name="sequence" eval="10"/>
-            <field name="domain">[('state', '=', 'published')]</field>
+            <field name="sequence" eval="20"/>
+            <field name="domain" eval="[('state', '=', 'published')]" pyson="1"/>
             <field name="act_window" ref="action_cms_articles"/>
       	</record>
       	<record model="ir.action.act_window.domain" id="act_cms_articles_archived">
             <field name="name">Archived</field>
             <field name="sequence" eval="30"/>
-            <field name="domain">[('state', '=', 'archived')]</field>
+            <field name="domain" eval="[('state', '=', 'archived')]" pyson="1"/>
             <field name="act_window" ref="action_cms_articles"/>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_articles_form_view1">
             <field name="sequence" eval="20"/>
             <field name="view" ref="cms_article_view_form"/>
             <field name="act_window" ref="action_cms_articles"/>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_articles_form_view2">
             <field name="sequence" eval="10"/>
             <field name="view" ref="cms_article_view_tree"/>
@@ -175,9 +175,9 @@
             name="Articles" parent="menu_cms_articles" />
 
         <!-- Banners -->
-        <menuitem id="menu_cms_banners" name="Banners" 
+        <menuitem id="menu_cms_banners" name="Banners"
             parent="menu_nereid_cms" />
-            
+
         <record model="ir.ui.view" id="cms_banner_categ_view_form">
             <field name="model">nereid.cms.banner.category</field>
             <field name="type">form</field>
@@ -194,23 +194,23 @@
             <field name="name">CMS Banner Categories</field>
             <field name="res_model">nereid.cms.banner.category</field>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_banner_category_form_view1">
             <field name="sequence" eval="20"/>
             <field name="view" ref="cms_banner_categ_view_form"/>
             <field name="act_window" ref="action_cms_banner_category"/>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_banner_category_form_view2">
             <field name="sequence" eval="10"/>
             <field name="view" ref="cms_banner_categ_view_tree"/>
             <field name="act_window" ref="action_cms_banner_category"/>
         </record>
 
-        <menuitem action="action_cms_banner_category" 
+        <menuitem action="action_cms_banner_category"
           id="menu_cms_banner_category"
           name="Banner Categories" parent="menu_cms_banners" />
-            
+
         <record model="ir.ui.view" id="cms_banner_view_form">
             <field name="model">nereid.cms.banner</field>
             <field name="type">form</field>
@@ -227,13 +227,13 @@
             <field name="name">CMS Banners</field>
             <field name="res_model">nereid.cms.banner</field>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_banners_form_view1">
             <field name="sequence" eval="20"/>
             <field name="view" ref="cms_banner_view_form"/>
             <field name="act_window" ref="action_cms_banners"/>
         </record>
-        <record model="ir.action.act_window.view" 
+        <record model="ir.action.act_window.view"
                 id="act_cms_banners_form_view2">
             <field name="sequence" eval="10"/>
             <field name="view" ref="cms_banner_view_tree"/>
@@ -246,14 +246,13 @@
         <!-- Website -->
         <record model="ir.ui.view" id="cms_website_view_form">
             <field name="model">nereid.website</field>
-            <field name="type">form</field>
             <field name="inherit" ref="nereid.website_view_form" />
             <field name="name">cms_website_form</field>
         </record>
 
         <!-- Model Access -->
         <record model="ir.model.access" id="access_menuitems_nereid_admin">
-            <field name="model" 
+            <field name="model"
                 search="[('model', '=', 'nereid.cms.menuitem')]"/>
             <field name="group" ref="nereid.group_nereid_admin"/>
             <field name="perm_read" eval="True"/>
@@ -261,8 +260,17 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
+
+        <record model="ir.model.access" id="access_menuitems_nereid_non_group">
+            <field name="model"
+                search="[('model', '=', 'nereid.cms.menuitem')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_article_nereid_admin">
-            <field name="model" 
+            <field name="model"
                 search="[('model', '=', 'nereid.cms.article')]"/>
             <field name="group" ref="nereid.group_nereid_admin"/>
             <field name="perm_read" eval="True"/>
@@ -270,14 +278,30 @@
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
         </record>
+        <record model="ir.model.access" id="access_article_nereid_non_group">
+            <field name="model"
+                search="[('model', '=', 'nereid.cms.article')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
+        </record>
         <record model="ir.model.access" id="access_banner_nereid_admin">
-            <field name="model" 
+            <field name="model"
                 search="[('model', '=', 'nereid.cms.banner')]"/>
             <field name="group" ref="nereid.group_nereid_admin"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="True"/>
             <field name="perm_create" eval="True"/>
             <field name="perm_delete" eval="True"/>
+        </record>
+        <record model="ir.model.access" id="access_banner_nereid_non_group">
+            <field name="model"
+                search="[('model', '=', 'nereid.cms.banner')]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_delete" eval="False"/>
         </record>
 
     </data>

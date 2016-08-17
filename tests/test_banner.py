@@ -9,13 +9,14 @@ import unittest
 
 from lxml import objectify
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
+from trytond.tests.test_tryton import POOL, USER, ModuleTestCase, \
+    with_transaction
 from nereid.testing import NereidTestCase
-from trytond.transaction import Transaction
 
 
-class TestBanner(NereidTestCase):
+class TestBanner(NereidTestCase, ModuleTestCase):
     """Test Banners"""
+    module = 'nereid_cms'
 
     def setUp(self):
         trytond.tests.test_tryton.install_module('nereid_cms')
@@ -100,6 +101,7 @@ class TestBanner(NereidTestCase):
             'currencies': [('add', [usd.id])],
         }])[0]
 
+    @with_transaction()
     def test_0010_banner_categ(self):
         """All banners in published state.
 
@@ -110,115 +112,114 @@ class TestBanner(NereidTestCase):
         This test creates four banner of which two are later archived, and the
         test ensures that there are only two published banners
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
+        banner_categ1, = self.BannerCategory.create([{
+            'name': 'CAT-A'
+        }])
+        banner_categ2, = self.BannerCategory.create([{
+            'name': 'CAT-B'
+        }])
 
-            banner_categ1, = self.BannerCategory.create([{
-                'name': 'CAT-A'
-            }])
-            banner_categ2, = self.BannerCategory.create([{
-                'name': 'CAT-B'
-            }])
+        self.Banner.create([{
+            'name': 'CAT-A1',
+            'category': banner_categ1,
+            'type': 'custom_code',
+            'custom_code': 'Custom code A1',
+            'state': 'archived'
+        }])
+        self.Banner.create([{
+            'name': 'CAT-A2',
+            'category': banner_categ1,
+            'type': 'custom_code',
+            'custom_code': 'Custom code A2',
+            'state': 'published'
+        }])
+        self.Banner.create([{
+            'name': 'CAT-B1',
+            'category': banner_categ2,
+            'type': 'custom_code',
+            'custom_code': 'Custom code B1',
+            'state': 'archived'
+        }])
+        self.Banner.create([{
+            'name': 'CAT-B2',
+            'category': banner_categ2,
+            'type': 'custom_code',
+            'custom_code': 'Custom code B2',
+            'state': 'published'
+        }])
 
-            self.Banner.create([{
-                'name': 'CAT-A1',
-                'category': banner_categ1,
-                'type': 'custom_code',
-                'custom_code': 'Custom code A1',
-                'state': 'archived'
-            }])
-            self.Banner.create([{
-                'name': 'CAT-A2',
-                'category': banner_categ1,
-                'type': 'custom_code',
-                'custom_code': 'Custom code A2',
-                'state': 'published'
-            }])
-            self.Banner.create([{
-                'name': 'CAT-B1',
-                'category': banner_categ2,
-                'type': 'custom_code',
-                'custom_code': 'Custom code B1',
-                'state': 'archived'
-            }])
-            self.Banner.create([{
-                'name': 'CAT-B2',
-                'category': banner_categ2,
-                'type': 'custom_code',
-                'custom_code': 'Custom code B2',
-                'state': 'published'
-            }])
+        self.assertEqual(len(banner_categ1.banners), 2)
+        self.assertEqual(len(banner_categ1.banners), 2)
+        self.assertEqual(len(banner_categ1.published_banners), 1)
+        self.assertEqual(len(banner_categ1.published_banners), 1)
 
-            self.assertEqual(len(banner_categ1.banners), 2)
-            self.assertEqual(len(banner_categ1.banners), 2)
-            self.assertEqual(len(banner_categ1.published_banners), 1)
-            self.assertEqual(len(banner_categ1.published_banners), 1)
-
+    @with_transaction()
     def test_0020_banner_image(self):
         """
         Test the image type banner created using static files
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            site = self.setup_defaults()
+        site = self.setup_defaults()
 
-            category, = self.BannerCategory.create([{
-                'name': 'test-banners',
-                'website': site
-            }])
-            folder, = self.Folder.create([{
-                'description': 'image',
-                'name': 'image'
-            }])
-            file, = self.File.create([{
-                'name': 'logo.png',
-                'folder': folder,
-            }])
-            self.Banner.create([{
-                'name': 'Test Image Banner',
-                'category': category,
-                'type': 'media',
-                'file': file,
-                'state': 'published'
-            }])
+        category, = self.BannerCategory.create([{
+            'name': 'test-banners',
+            'website': site
+        }])
+        folder, = self.Folder.create([{
+            'description': 'image',
+            'name': 'image'
+        }])
+        file, = self.File.create([{
+            'name': 'logo.png',
+            'folder': folder,
+        }])
+        self.Banner.create([{
+            'name': 'Test Image Banner',
+            'category': category,
+            'type': 'media',
+            'file': file,
+            'state': 'published'
+        }])
 
-            app = self.get_app()
-            with app.test_client() as c:
-                response = c.get('/')
-                html = objectify.fromstring(response.data)
-                self.assertEqual(
-                    html.find('img').get('src'),
-                    '/static-file/image/logo.png'
-                )
+        app = self.get_app()
+        with app.test_client() as c:
+            response = c.get('/')
+            html = objectify.fromstring(response.data)
+            self.assertEqual(
+                html.find('img').get('src'),
+                '/static-file/image/logo.png'
+            )
 
+    @with_transaction()
     def test_0040_custom_code(self):
         """
         Test the custom code
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            site = self.setup_defaults()
+        site = self.setup_defaults()
 
-            category, = self.BannerCategory.create([{
-                'name': 'test-banners',
-                'website': site
-            }])
-            self.Banner.create([{
-                'name': 'Test custom code Banner',
-                'category': category,
-                'type': 'custom_code',
-                'custom_code': 'some ultra complex custom code',
-                'state': 'published'
-            }])
+        category, = self.BannerCategory.create([{
+            'name': 'test-banners',
+            'website': site
+        }])
+        self.Banner.create([{
+            'name': 'Test custom code Banner',
+            'category': category,
+            'type': 'custom_code',
+            'custom_code': 'some ultra complex custom code',
+            'state': 'published'
+        }])
 
-            app = self.get_app()
-            with app.test_client() as c:
-                response = c.get('/')
-                self.assertTrue(
-                    'some ultra complex custom code' in response.data,
-                )
+        app = self.get_app()
+        with app.test_client() as c:
+            response = c.get('/')
+            self.assertTrue(
+                'some ultra complex custom code' in response.data,
+            )
 
 
-class TestGetHtml(NereidTestCase):
+class TestGetHtml(NereidTestCase, ModuleTestCase):
     """Test Get Html for Banners
     """
+    module = 'nereid_cms'
 
     def setUp(self):
         trytond.tests.test_tryton.install_module('nereid_cms')
@@ -304,63 +305,63 @@ class TestGetHtml(NereidTestCase):
             'currencies': [('add', [usd.id])],
         }])[0]
 
+    @with_transaction()
     def test_0010_get_html(self):
         """
         Get Html for banners with type `image`.
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            site = self.setup_defaults()
+        site = self.setup_defaults()
 
-            banner_category, = self.BannerCategory.create([{
-                'name': 'Category A',
-                'website': site,
-            }])
+        banner_category, = self.BannerCategory.create([{
+            'name': 'Category A',
+            'website': site,
+        }])
 
-            image, = self.Folder.create([{
-                'description': 'image',
-                'name': 'image'
-            }])
-            file, = self.File.create([{
-                'name': 'logo.png',
-                'folder': image,
-            }])
-            self.Banner.create([{
-                'name': 'Test Banner1',
-                'category': banner_category,
-                'type': 'media',
-                'file': file,
-                'state': 'published'
-            }])
+        image, = self.Folder.create([{
+            'description': 'image',
+            'name': 'image'
+        }])
+        file, = self.File.create([{
+            'name': 'logo.png',
+            'folder': image,
+        }])
+        self.Banner.create([{
+            'name': 'Test Banner1',
+            'category': banner_category,
+            'type': 'media',
+            'file': file,
+            'state': 'published'
+        }])
 
-            app = self.get_app()
-            with app.test_client() as c:
-                rv = c.get('/')
-                html = objectify.fromstring(rv.data)
-                self.assertEqual(
-                    html.find('img').get('src'),
-                    '/static-file/image/logo.png'
-                )
+        app = self.get_app()
+        with app.test_client() as c:
+            rv = c.get('/')
+            html = objectify.fromstring(rv.data)
+            self.assertEqual(
+                html.find('img').get('src'),
+                '/static-file/image/logo.png'
+            )
 
+    @with_transaction()
     def test_0030_get_html(self):
         """
         Get Html for banners with type `custom_code`.
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            banner_category, = self.BannerCategory.create([{
-                'name': 'Category C'
-            }])
+        banner_category, = self.BannerCategory.create([{
+            'name': 'Category C'
+        }])
 
-            banner, = self.Banner.create([{
-                'name': 'Test Banner3',
-                'category': banner_category,
-                'type': 'custom_code',
-                'custom_code': 'Custom code for Test Banner3',
-                'state': 'published'
-            }])
-            rv = banner.get_html()
-            self.assertEqual(rv, banner.custom_code)
+        banner, = self.Banner.create([{
+            'name': 'Test Banner3',
+            'category': banner_category,
+            'type': 'custom_code',
+            'custom_code': 'Custom code for Test Banner3',
+            'state': 'published'
+        }])
+        rv = banner.get_html()
+        self.assertEqual(rv, banner.custom_code)
 
 
 def suite():

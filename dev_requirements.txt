@@ -4,8 +4,6 @@
 markdown
 docutils
 
-trytond_product>=3.2,<3.3
-
 flake8
 coverage
 coveralls

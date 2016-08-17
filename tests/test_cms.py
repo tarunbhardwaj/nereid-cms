@@ -8,10 +8,10 @@
 import unittest
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT, \
-    test_view, test_depends
+from trytond.tests.test_tryton import (
+    POOL, USER, with_transaction
+)
 from nereid.testing import NereidTestCase
-from trytond.transaction import Transaction
 
 
 class TestCMS(NereidTestCase):
@@ -123,18 +123,7 @@ class TestCMS(NereidTestCase):
             'categories': [('add', [self.article_categ.id])],
         }])
 
-    def test0005views(self):
-        '''
-        Test views.
-        '''
-        test_view('nereid_cms')
-
-    def test0006depends(self):
-        '''
-        Test depends.
-        '''
-        test_depends()
-
+    @with_transaction()
     def test_0090_article_states(self):
         """All articles in published state.
 
@@ -145,336 +134,333 @@ class TestCMS(NereidTestCase):
         This test creates four articles of which two are later archived, and
         the test ensures that there are only two published articles
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
+        article_categ1, = self.ArticleCategory.create([{
+            'title': 'Test Categ',
+            'unique_name': 'test-categ1',
+        }])
+        article_categ2, = self.ArticleCategory.create([{
+            'title': 'Test Categ',
+            'unique_name': 'test-categ2',
+        }])
 
-            article_categ1, = self.ArticleCategory.create([{
-                'title': 'Test Categ',
-                'unique_name': 'test-categ1',
-            }])
-            article_categ2, = self.ArticleCategory.create([{
-                'title': 'Test Categ',
-                'unique_name': 'test-categ2',
-            }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article1',
+            'content': 'Test Content',
+            'sequence': 10,
+            'categories': [('add', [article_categ1.id])],
+            'state': 'archived'
+        }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article2',
+            'content': 'Test Content',
+            'sequence': 20,
+            'categories': [('add', [article_categ1.id])],
+            'state': 'published'
+        }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article3',
+            'content': 'Test Content',
+            'sequence': 30,
+            'categories': [('add', [article_categ2.id])],
+            'state': 'archived'
+        }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article4',
+            'content': 'Test Content',
+            'sequence': 40,
+            'categories': [('add', [article_categ2.id])],
+            'state': 'published'
+        }])
 
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article1',
-                'content': 'Test Content',
-                'sequence': 10,
-                'categories': [('add', [article_categ1.id])],
-                'state': 'archived'
-            }])
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article2',
-                'content': 'Test Content',
-                'sequence': 20,
-                'categories': [('add', [article_categ1.id])],
-                'state': 'published'
-            }])
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article3',
-                'content': 'Test Content',
-                'sequence': 30,
-                'categories': [('add', [article_categ2.id])],
-                'state': 'archived'
-            }])
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article4',
-                'content': 'Test Content',
-                'sequence': 40,
-                'categories': [('add', [article_categ2.id])],
-                'state': 'published'
-            }])
+        self.assertEqual(len(article_categ1.articles), 2)
+        self.assertEqual(len(article_categ2.articles), 2)
+        self.assertEqual(len(article_categ1.published_articles), 1)
+        self.assertEqual(len(article_categ2.published_articles), 1)
 
-            self.assertEqual(len(article_categ1.articles), 2)
-            self.assertEqual(len(article_categ2.articles), 2)
-            self.assertEqual(len(article_categ1.published_articles), 1)
-            self.assertEqual(len(article_categ2.published_articles), 1)
-
+    @with_transaction()
     def test_0010_article_category(self):
         "Successful rendering of an article_category page"
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article1',
-                'content': 'Test Content',
-                'sequence': 10,
-                'categories': [('add', [self.article_categ.id])],
-                'state': 'published'
-            }, {
-                'title': 'Test Article',
-                'uri': 'test-article2',
-                'content': 'Test content',
-                'sequence': 20,
-                'categories': [('add', [self.article_categ.id])],
-                'state': 'draft'
-            }])
-            with app.test_client() as c:
-                response = c.get('/article-category/test-categ/')
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, '1')
-                self.assertEqual(len(self.article_categ.published_articles), 1)
-                self.assertEqual(len(self.article_categ.articles), 3)
+        self.setup_defaults()
+        app = self.get_app()
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article1',
+            'content': 'Test Content',
+            'sequence': 10,
+            'categories': [('add', [self.article_categ.id])],
+            'state': 'published'
+        }, {
+            'title': 'Test Article',
+            'uri': 'test-article2',
+            'content': 'Test content',
+            'sequence': 20,
+            'categories': [('add', [self.article_categ.id])],
+            'state': 'draft'
+        }])
+        with app.test_client() as c:
+            response = c.get('/article-category/test-categ/')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, '1')
+            self.assertEqual(len(self.article_categ.published_articles), 1)
+            self.assertEqual(len(self.article_categ.articles), 3)
 
+    @with_transaction()
     def test_0020_article(self):
         "Successful rendering of an article page"
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            # Publish the article first
-            article, = self.Article.search([
-                ('uri', '=', 'test-article')
-            ])
-            self.Article.publish([article])
+        # Publish the article first
+        article, = self.Article.search([
+            ('uri', '=', 'test-article')
+        ])
+        self.Article.publish([article])
 
-            with app.test_client() as c:
-                response = c.get('/article/test-article')
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, 'Test Content')
+        with app.test_client() as c:
+            response = c.get('/article/test-article')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, 'Test Content')
 
+    @with_transaction()
     def test_0030_sitemapindex(self):
         '''
         Successful index rendering
         '''
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app(DEBUG=True)
-            with app.test_client() as c:
-                response = c.get('/sitemaps/article-category-index.xml')
-                self.assertEqual(response.status_code, 200)
+        self.setup_defaults()
+        app = self.get_app(DEBUG=True)
+        with app.test_client() as c:
+            response = c.get('/sitemaps/article-category-index.xml')
+            self.assertEqual(response.status_code, 200)
 
+    @with_transaction()
     def test_0040_category_sitemap(self):
         '''
         Successful rendering artical catagory sitemap
         '''
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
-            with app.test_client() as c:
-                response = c.get('/sitemaps/article-category-1.xml')
-                self.assertEqual(response.status_code, 200)
+        self.setup_defaults()
+        app = self.get_app()
+        with app.test_client() as c:
+            response = c.get('/sitemaps/article-category-1.xml')
+            self.assertEqual(response.status_code, 200)
 
+    @with_transaction()
     def test_0050_article_attribute(self):
         '''
         Test creating and deleting an Article with attributes
         '''
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            article_category, = self.ArticleCategory.create([{
-                'title': 'Test Categ',
-                'unique_name': 'test-categ',
-            }])
+        article_category, = self.ArticleCategory.create([{
+            'title': 'Test Categ',
+            'unique_name': 'test-categ',
+        }])
 
-            article1, = self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'Test Article',
-                'content': 'Test Content',
-                'sequence': 10,
-                'categories': [('add', [article_category.id])],
-                'attributes': [
-                    ('create', [{
-                        'name': 'google+',
-                        'value': 'abc',
-                    }])
-                ]
-            }])
-            # Checks an article is created with attributes
-            self.assert_(article1.id)
-            self.assertEqual(self.ArticleAttribute.search([], count=True), 1)
-            # Checks that if an article is deleted then respective attributes
-            # are also deleted.
-            self.Article.delete([article1])
-            self.assertEqual(self.ArticleAttribute.search([], count=True), 0)
+        article1, = self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'Test Article',
+            'content': 'Test Content',
+            'sequence': 10,
+            'categories': [('add', [article_category.id])],
+            'attributes': [
+                ('create', [{
+                    'name': 'google+',
+                    'value': 'abc',
+                }])
+            ]
+        }])
+        # Checks an article is created with attributes
+        self.assert_(article1.id)
+        self.assertEqual(self.ArticleAttribute.search([], count=True), 1)
+        # Checks that if an article is deleted then respective attributes
+        # are also deleted.
+        self.Article.delete([article1])
+        self.assertEqual(self.ArticleAttribute.search([], count=True), 0)
 
+    @with_transaction()
     def test_0055_article_content(self):
         """
         Tests that the article has been rendered properly.
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            article_category, = self.ArticleCategory.create([{
-                'title': 'Test Categ',
-                'unique_name': 'test-categ',
-            }])
+        article_category, = self.ArticleCategory.create([{
+            'title': 'Test Categ',
+            'unique_name': 'test-categ',
+        }])
 
-            article1, = self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'Test Article',
-                'content': 'Test Content',
-                'content_type': 'plain',
-                'sequence': 10,
-                'categories': [('add', [article_category.id])],
-                'attributes': [
-                    ('create', [{
-                        'name': 'google+',
-                        'value': 'abc',
-                    }])
-                ]
-            }])
+        article1, = self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'Test Article',
+            'content': 'Test Content',
+            'content_type': 'plain',
+            'sequence': 10,
+            'categories': [('add', [article_category.id])],
+            'attributes': [
+                ('create', [{
+                    'name': 'google+',
+                    'value': 'abc',
+                }])
+            ]
+        }])
 
-            # Plain content.
-            self.assertEqual(article1.__html__(), article1.content)
+        # Plain content.
+        self.assertEqual(article1.__html__(), article1.content)
 
-            # HTML content.
-            article1.content = '<html><body><p>A paragraph.</p></body></html>'
-            article1.content_type = 'html'
+        # HTML content.
+        article1.content = '<html><body><p>A paragraph.</p></body></html>'
+        article1.content_type = 'html'
 
-            self.assertEqual(article1.__html__(), article1.content)
+        self.assertEqual(article1.__html__(), article1.content)
 
-            # Markdown content.
-            article1.content = '**This is strong in markdown**'
-            article1.content_type = 'markdown'
-            article1.save()
+        # Markdown content.
+        article1.content = '**This is strong in markdown**'
+        article1.content_type = 'markdown'
+        article1.save()
 
-            self.assertIn(
-                '<strong>This is strong in markdown</strong>',
-                article1.__html__()
-            )
+        self.assertIn(
+            '<strong>This is strong in markdown</strong>',
+            article1.__html__()
+        )
 
-            article1.content = '`A blockquote`'
-            article1.save()
+        article1.content = '`A blockquote`'
+        article1.save()
 
-            self.assertIn(
-                '<p><code>A blockquote</code></p>',
-                article1.__html__()
-            )
+        self.assertIn(
+            '<p><code>A blockquote</code></p>',
+            article1.__html__()
+        )
 
-            # RST content.
-            article1.content = '*This is emphasis in rst*'
-            article1.content_type = 'rst'
-            article1.save()
+        # RST content.
+        article1.content = '*This is emphasis in rst*'
+        article1.content_type = 'rst'
+        article1.save()
 
-            self.assertIn(
-                '<em>This is emphasis in rst</em>',
-                article1.__html__()
-            )
+        self.assertIn(
+            '<em>This is emphasis in rst</em>',
+            article1.__html__()
+        )
 
+    @with_transaction()
     def test_0060_atom_feeds(self):
         """
         Tests that the render of atom xml feeds is working correctly.
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            article_categ1, = self.ArticleCategory.create([{
-                'title': 'Test Categ',
-                'unique_name': 'test-categ1',
-            }])
-            article_categ2, = self.ArticleCategory.create([{
-                'title': 'Test Categ',
-                'unique_name': 'test-categ2',
-            }])
+        article_categ1, = self.ArticleCategory.create([{
+            'title': 'Test Categ',
+            'unique_name': 'test-categ1',
+        }])
+        article_categ2, = self.ArticleCategory.create([{
+            'title': 'Test Categ',
+            'unique_name': 'test-categ2',
+        }])
 
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article1',
-                'content': 'Test Content',
-                'sequence': 10,
-                'categories': [('add', [article_categ1.id])],
-                'state': 'published',
-                'author': self.registered_user.id,
-            }])
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article2',
-                'content': 'Test Content',
-                'sequence': 20,
-                'categories': [('add', [article_categ1.id])],
-                'state': 'published',
-                'author': self.registered_user.id,
-            }])
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article3',
-                'content': 'Test Content',
-                'sequence': 30,
-                'categories': [('add', [article_categ2.id])],
-                'state': 'archived',
-                'author': self.registered_user.id,
-            }])
-            self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article4',
-                'content': 'Test Content',
-                'sequence': 40,
-                'categories': [('add', [article_categ2.id])],
-                'state': 'published',
-                'author': self.registered_user.id,
-            }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article1',
+            'content': 'Test Content',
+            'sequence': 10,
+            'categories': [('add', [article_categ1.id])],
+            'state': 'published',
+            'author': self.registered_user.id,
+        }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article2',
+            'content': 'Test Content',
+            'sequence': 20,
+            'categories': [('add', [article_categ1.id])],
+            'state': 'published',
+            'author': self.registered_user.id,
+        }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article3',
+            'content': 'Test Content',
+            'sequence': 30,
+            'categories': [('add', [article_categ2.id])],
+            'state': 'archived',
+            'author': self.registered_user.id,
+        }])
+        self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article4',
+            'content': 'Test Content',
+            'sequence': 40,
+            'categories': [('add', [article_categ2.id])],
+            'state': 'published',
+            'author': self.registered_user.id,
+        }])
 
-            with app.test_client() as c:
-                # Try rendering all articles.
-                rv = c.get('/article/all.atom')
-                self.assertEqual(
-                    rv.data.count('<entry'),
-                    len(self.Article.search([('state', '=', 'published')]))
-                )
+        with app.test_client() as c:
+            # Try rendering all articles.
+            rv = c.get('/article/all.atom')
+            self.assertEqual(
+                rv.data.count('<entry'),
+                len(self.Article.search([('state', '=', 'published')]))
+            )
 
-                rv = c.get(
-                    '/article-category/%s.atom' % article_categ1.unique_name
-                )
-                self.assertEqual(
-                    rv.data.count('<entry'),
-                    len(article_categ1.published_articles)
-                )
+            rv = c.get(
+                '/article-category/%s.atom' % article_categ1.unique_name
+            )
+            self.assertEqual(
+                rv.data.count('<entry'),
+                len(article_categ1.published_articles)
+            )
 
-                rv = c.get('/article-author/%d.atom' % self.registered_user.id)
-                self.assertEqual(
-                    rv.data.count('<entry'),
-                    len(self.Article.search([
-                        ('author', '=', self.registered_user.id),
-                        ('state', '=', 'published'),
-                    ]))
-                )
+            rv = c.get('/article-author/%d.atom' % self.registered_user.id)
+            self.assertEqual(
+                rv.data.count('<entry'),
+                len(self.Article.search([
+                    ('author', '=', self.registered_user.id),
+                    ('state', '=', 'published'),
+                ]))
+            )
 
-                # Try rendering for a category that does not exist.
-                rv = c.get('/article-category/%d.atom' % 70)
-                self.assertEqual(rv.status_code, 404)
+            # Try rendering for a category that does not exist.
+            rv = c.get('/article-category/%d.atom' % 70)
+            self.assertEqual(rv.status_code, 404)
 
+    @with_transaction()
     def test_0065_sort_articles_by_sequence_on_article_category_page(self):
         "Sort Articles by SEquence on Articles Category Page"
+        self.setup_defaults()
 
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.article_categ.sort_order = 'sequence'
+        self.article_categ.template = 'test-category.jinja'
+        self.article_categ.save()
 
-            self.article_categ.sort_order = 'sequence'
-            self.article_categ.template = 'test-category.jinja'
-            self.article_categ.save()
+        article1, article2 = self.Article.create([{
+            'title': 'Test Article',
+            'uri': 'test-article1',
+            'content': 'Test Content',
+            'sequence': 30,
+            'categories': [('add', [self.article_categ.id])],
+            'state': 'published',
+        }, {
+            'title': 'Test Article',
+            'uri': 'test-article2',
+            'content': 'Test Content',
+            'sequence': 20,
+            'categories': [('add', [self.article_categ.id])],
+            'state': 'published',
+        }])
 
-            article1, article2 = self.Article.create([{
-                'title': 'Test Article',
-                'uri': 'test-article1',
-                'content': 'Test Content',
-                'sequence': 30,
-                'categories': [('add', [self.article_categ.id])],
-                'state': 'published',
-            }, {
-                'title': 'Test Article',
-                'uri': 'test-article2',
-                'content': 'Test Content',
-                'sequence': 20,
-                'categories': [('add', [self.article_categ.id])],
-                'state': 'published',
-            }])
-
-            app = self.get_app()
-            with app.test_client() as c:
-                rv = c.get('/article-category/test-categ/')
-            self.assertTrue(
-                rv.data.find(article1.uri) > rv.data.find(article2.uri)
-            )
+        app = self.get_app()
+        with app.test_client() as c:
+            rv = c.get('/article-category/test-categ/')
+        self.assertTrue(
+            rv.data.find(article1.uri) > rv.data.find(article2.uri)
+        )
 
 
 def suite():
     "CMS test suite"
     test_suite = unittest.TestSuite()
     test_suite.addTests(
-        unittest.TestLoader().loadTestsFromTestCase(TestCMS)
+        unittest.TestLoader().loadTestsFromTestCase(TestCMS),
     )
     return test_suite
 
