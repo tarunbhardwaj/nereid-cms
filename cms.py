@@ -88,9 +88,9 @@ class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
     _rec_name = 'title'
 
     type_ = fields.Selection([
-        ('view', 'View'),
-        ('static', 'Static'),
-        ('record', 'Record'),
+        ('view', 'Parent Menu (Not link)'),
+        ('static', 'Web Address'),
+        ('record', 'Link to product/category/article'),
     ], 'Type', required=True, select=True)
     active = fields.Boolean('Active', select=True)
     title = fields.Char(
