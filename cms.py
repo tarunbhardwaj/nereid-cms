@@ -100,7 +100,7 @@ class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
         }
     )
     link = fields.Char(
-        'Link', states={
+        'Web Address', states={
             'required': Eval('type_') == 'static',
             'invisible': Eval('type_') != 'static',
         }, depends=['type_']
@@ -121,7 +121,7 @@ class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
 
     sequence = fields.Integer('Sequence', required=True, select=True)
     record = fields.Reference(
-        'Record', selection='allowed_models', states={
+        'Select Record', selection='allowed_models', states={
             'required': Eval('type_') == 'record',
             'invisible': Eval('type_') != 'record',
         }, depends=['type_'],
