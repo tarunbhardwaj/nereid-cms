@@ -199,6 +199,16 @@ class MenuItem(ModelSQL, ModelView, CMSMenuItemMixin):
         if self.type_ == 'record':
             res['record'] = self.record
             res['link'] = self.record.get_absolute_url()
+            # Fetch record's menu item with depth 0, as childrens are not
+            # needed. This allow downstream modules to add new keys to menu
+            # item based on records. Like adding an image to article menu item.
+            try:
+                record_as_item = self.record.get_menu_item(0)
+            except NotImplementedError:
+                pass
+            else:
+                record_as_item.update(res)
+                res = record_as_item
 
         if max_depth > 0:
             res['children'] = self.get_children(max_depth=max_depth - 1)
