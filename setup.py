@@ -38,6 +38,7 @@ class SQLiteTest(Command):
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
+
 config = ConfigParser.ConfigParser()
 config.readfp(open('tryton.cfg'))
 info = dict(config.items('tryton'))
